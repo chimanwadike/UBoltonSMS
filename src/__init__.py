@@ -1,8 +1,11 @@
-from flask import Flask
+from flask import Flask, jsonify
 import os
 from src.blueprints.auth import auth
 from src.blueprints.semesters import semesters
+from src.constants.http_status_codes import HTTP_500_INTERNAL_SERVER_ERROR
 from src.database.database_context import db
+from flasgger import Swagger, swag_from
+from src.config.swagger import template, swagger_config
 
 
 def create_app(test_config=None):
@@ -13,7 +16,11 @@ def create_app(test_config=None):
         app.config.from_mapping(
             SECRET_KEY=os.environ.get("SECRET_KEY"),
             SQLALCHEMY_DATABASE_URI=os.environ.get("SQLALCHEMY_DB_URI"),
-            SQLALCHEMY_TRACK_MODIFICATIONS=True)
+            SQLALCHEMY_TRACK_MODIFICATIONS=True,
+       SWAGGER={'title': 'UBolton API',
+                'uiversion': 3}
+
+        )
     else:
         app.config.from_mapping(test_config)
 
@@ -22,5 +29,11 @@ def create_app(test_config=None):
 
     app.register_blueprint(auth)
     app.register_blueprint(semesters)
+
+    Swagger(app, config=swagger_config, template=template)
+
+    @app.errorhandler(HTTP_500_INTERNAL_SERVER_ERROR)
+    def handle_500(ex):
+        return jsonify({'message': 'something went wrong and we are working on it'}), HTTP_500_INTERNAL_SERVER_ERROR
 
     return app
