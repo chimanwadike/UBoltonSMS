@@ -43,15 +43,14 @@ class Venue(db.Model):
         return 'Venue>>> {self.id}'
 
 
-class Module(db.Model):
+class Course(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(50), nullable=False)
+    code = db.Column(db.String(15), nullable=False)
+    title = db.Column(db.String(50), nullable=False)
     description = db.Column(db.String(50), nullable=True)
-    created_at = db.Column(db.DateTime, default=datetime.now())
-    deleted_at = db.Column(db.DateTime, nullable=True)
 
     def __repr__(self) -> str:
-        return 'Module>>> {self.id}'
+        return 'Course>>> {self.id}'
 
 
 class Role(db.Model):
