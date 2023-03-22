@@ -7,9 +7,6 @@ parameters:
   - in: header
     name: Authorization
     required: false
-  - in: path
-    name: id
-    required: true
 
 responses:
   200:
@@ -33,7 +30,5 @@ responses:
           type: "date"
           description: 'The semester end date'
           example: "2023-08-19"
-  400:
-    description: Bad request
   401:
     description: Fails to perform operation due to authentication error
