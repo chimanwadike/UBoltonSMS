@@ -1,0 +1,54 @@
+CREATE semester
+---
+tags:
+  - Semesters
+parameters:
+  - in: header
+    name: Authorization
+    required: false
+  - name: body
+    description: The body should contain the semester data
+    in: body
+    required: true
+    schema:
+      type: object
+      required:
+        - "name"
+        - "start_date"
+        - "end_date"
+      properties:
+        name:
+          type: "string"
+          example: "1st Semester"
+        start_date:
+          type: "date"
+          example: "2023-08-19"
+        end_date:
+          type: "date"
+          example: "2023-08-19"
+responses:
+  201:
+    description: When a semester is successfully created
+    schema:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: 'The semester ID'
+          example: 1
+        name:
+          type: "string"
+          description: 'The title of the semester'
+          example: "1st Semester"
+        start_date:
+          type: "date"
+          description: 'The semester start date'
+          example: "2023-08-19"
+        end_date:
+          type: "date"
+          description: 'The semester end date'
+          example: "2023-08-19"
+  409:
+    description: When a semester already exists
+  401:
+    description: Fails to perform operation due to authentication error

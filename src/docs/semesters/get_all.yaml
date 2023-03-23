@@ -1,0 +1,45 @@
+GET semesters
+---
+tags:
+  - Semesters
+
+parameters:
+  - in: header
+    name: Authorization
+    required: false
+
+responses:
+  200:
+    description: List of semesters
+    schema:
+      $ref: '#/definitions/Items'
+  401:
+    description: Fails to perform operation due to authentication error
+
+definitions:
+  Items:
+    type: object
+    required:
+      - data
+    properties:
+      data:
+        type: array
+        items:
+          type: object
+          properties:
+            id:
+              type: integer
+              description: 'The semester ID'
+              example: 1
+            name:
+              type: "string"
+              description: 'The title of the semester'
+              example: "1st Semester"
+            start_date:
+              type: "date"
+              description: 'The semester start date'
+              example: "2023-08-19"
+            end_date:
+              type: "date"
+              description: 'The semester end date'
+              example: "2023-08-19"
