@@ -24,6 +24,7 @@ def create():
 
 
 @semesters.delete('/<int:id>')
+@swag_from('../docs/semesters/delete.yaml')
 def delete(id):
     return delete_semester(request, id)
 

@@ -39,7 +39,7 @@ def get_semester(self, id):
         .first()
 
     if not semester:
-        return jsonify({'error_message': 'Semester does not exist'}), HTTP_400_BAD_REQUEST
+        return jsonify({'error_message': 'Semester does not exist'}), HTTP_404_NOT_FOUND
 
     return jsonify(
         {'id': semester.id,
