@@ -2,6 +2,7 @@ from flask import Flask, jsonify
 import os
 from src.blueprints.auth import auth
 from src.blueprints.semesters import semesters
+from src.blueprints.courses import courses
 from src.blueprints.venues import venues
 from src.constants.http_status_codes import HTTP_500_INTERNAL_SERVER_ERROR
 from src.database.database_context import db
@@ -30,6 +31,7 @@ def create_app(test_config=None):
 
     app.register_blueprint(auth)
     app.register_blueprint(semesters)
+    app.register_blueprint(courses)
     app.register_blueprint(venues)
 
     Swagger(app, config=swagger_config, template=template)
@@ -39,3 +41,4 @@ def create_app(test_config=None):
         return jsonify({'message': 'something went wrong and we are working on it'}), HTTP_500_INTERNAL_SERVER_ERROR
 
     return app
+

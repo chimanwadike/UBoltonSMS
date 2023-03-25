@@ -1,0 +1,27 @@
+DELETE course
+---
+basePath: /api/v1
+tags:
+  - name: courses
+    description: Operations related to courses
+paths:
+  /courses/{id}:
+    delete:
+      summary: Delete a course by ID
+      description: Deletes a course with the specified ID from the database
+      tags:
+        - Courses
+      parameters:
+        - name: id
+          in: path
+          description: The ID of the course to delete
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Course successfully deleted
+        '401':
+          description: Unauthorized access
+        '404':
+          description: Course not found
