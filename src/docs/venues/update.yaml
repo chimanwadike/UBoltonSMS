@@ -1,0 +1,35 @@
+Modify venue
+---
+tags:
+  - Venues
+parameters:
+  - in: header
+    name: Authorization
+    required: false
+  - name: body
+    description: The body should contain the venue data
+    in: body
+    required: true
+    schema:
+      type: object
+      required:
+        - "id"
+        - "name"
+        - "building"
+      properties:
+        id:
+          type: "integer"
+          example: 1
+        name:
+          type: "string"
+          example: "B01"
+        start_date:
+          type: "string"
+          example: "Senate House"
+responses:
+  200:
+    description: When a venue is successfully updated
+  404:
+    description: When a venue is not found
+  401:
+    description: Fails to perform operation due to authentication error
