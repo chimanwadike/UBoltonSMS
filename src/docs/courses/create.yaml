@@ -1,0 +1,54 @@
+CREATE course
+---
+tags:
+  - Courses
+parameters:
+  - in: header
+    name: Authorization
+    required: false
+  - name: body
+    description: The body should contain the course data
+    in: body
+    required: true
+    schema:
+      type: object
+      required:
+        - "code"
+        - "title"
+        - "description"
+      properties:
+        code:
+          type: "string"
+          example: "SWE 7101"
+        title:
+          type: "string"
+          example: "Advance Software Development"
+        description:
+          type: "string"
+          example: "This course explores advance software concepts"
+responses:
+  201:
+    description: When a course is successfully created
+    schema:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: 'The course ID'
+          example: 1
+        code:
+          type: "string"
+          description: 'The course code'
+          example: "SWE 7101"
+        title:
+          type: "string"
+          description: 'The course title'
+          example: "Advance Software Development"
+        description:
+          type: "string"
+          description: 'The course description'
+          example: "This course explores advance software concepts"
+  409:
+    description: When a course code already exists
+  401:
+    description: Unauthorized access
