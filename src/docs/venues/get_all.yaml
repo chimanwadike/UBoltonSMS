@@ -1,0 +1,41 @@
+GET venues
+---
+tags:
+  - Venues
+
+parameters:
+  - in: header
+    name: Authorization
+    required: false
+
+responses:
+  200:
+    description: List of venues
+    schema:
+      $ref: '#/definitions/Items'
+  401:
+    description: Fails to perform operation due to authentication error
+
+definitions:
+  Items:
+    type: object
+    required:
+      - data
+    properties:
+      data:
+        type: array
+        items:
+          type: object
+          properties:
+            id:
+              type: integer
+              description: 'The venue ID'
+              example: 1
+            name:
+              type: "string"
+              description: 'The title of the venue'
+              example: "B01"
+            building:
+              type: "string"
+              description: 'The building of venue'
+              example: "Senate House"
