@@ -51,11 +51,13 @@ def get_venue(self, id):
 
 def create_venue(self):
     data = self.get_json()
-    name1 = data['name'],
+    name = data.get('name')
     building = data['building']
+
 
     venue_exist = Venue.query \
         .filter(Venue.building == building) \
+        .filter(Venue.name == name) \
         .first()
 
     if venue_exist:
@@ -64,7 +66,7 @@ def create_venue(self):
 
 
 
-    venue = Venue(name=data.get('name'), building=building)
+    venue = Venue(name=name, building=building)
     db.session.add(venue)
     db.session.commit()
 
