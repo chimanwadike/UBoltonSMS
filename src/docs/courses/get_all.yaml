@@ -1,0 +1,32 @@
+GET courses
+---
+basePath: /api/v1
+tags:
+  - name: courses
+    description: Operations related to courses
+paths:
+  /courses:
+    get:
+      summary: Retrieve all courses
+      description: Returns a list of all courses in the system.
+      responses:
+        200:
+          description: A list of courses
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Course'
+        401:
+          description: Unauthorized access
+    definitions:
+      Course:
+        type: object
+        properties:
+          id:
+            type: integer
+          code:
+            type: string
+          title:
+            type: string
+          description:
+            type: string

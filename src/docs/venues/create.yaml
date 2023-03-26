@@ -1,0 +1,46 @@
+CREATE venue
+---
+tags:
+  - Venues
+parameters:
+  - in: header
+    name: Authorization
+    required: false
+  - name: body
+    description: The body should contain the venue data
+    in: body
+    required: true
+    schema:
+      type: object
+      required:
+        - "name"
+        - "building"
+      properties:
+        name:
+          type: "string"
+          example: "B01"
+        building:
+          type: "string"
+          example: "Senate House"
+responses:
+  201:
+    description: When a venue is successfully created
+    schema:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: 'The venue ID'
+          example: 1
+        name:
+          type: "string"
+          description: 'The title of the venue'
+          example: "B01"
+        building:
+          type: "string"
+          description: 'The building of venue'
+          example: "Senate House"
+  409:
+    description: When a venue already exists
+  401:
+    description: Fails to perform operation due to authentication error

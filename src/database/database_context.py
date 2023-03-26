@@ -49,6 +49,14 @@ class Course(db.Model):
     title = db.Column(db.String(50), nullable=False)
     description = db.Column(db.String(50), nullable=True)
 
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'code': self.code,
+            'title': self.title,
+            'description': self.description
+        }
+
     def __repr__(self) -> str:
         return 'Course>>> {self.id}'
 

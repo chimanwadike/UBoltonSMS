@@ -1,0 +1,46 @@
+GET course
+---
+basePath: /api/v1
+tags:
+  - name: courses
+    description: Operations related to courses
+paths:
+  /courses/{id}:
+    get:
+      summary: Get course by ID
+      parameters:
+        - name: id
+          in: path
+          description: ID of course to retrieve
+          required: true
+          type: integer
+      responses:
+        200:
+          description: Successfully retrieved course
+          schema:
+            type: object
+            items:
+              $ref: '#/definitions/Course'
+            properties:
+              id:
+                type: integer
+                description: ID of the course
+              code:
+                type: string
+                description: Course code
+              title:
+                type: string
+                description: Course title
+              description:
+                type: string
+                description: Course description
+        404:
+          description: Course not found
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                description: Error message
+        401:
+          description: Unauthorized access
