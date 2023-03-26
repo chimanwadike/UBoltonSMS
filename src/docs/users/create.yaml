@@ -1,0 +1,76 @@
+CREATE Users
+---
+tags:
+  - users
+parameters:
+  - in: header
+    name: Authorization
+    required: false
+  - name: body
+    description: The body should contain the user data
+    in: body
+    required: true
+    schema:
+      type: object
+      required:
+        - "email"
+        - "first_name"
+        - "last_name"
+        - "phone_number"
+        - "password"
+        - "status"
+
+      properties:
+        email:
+          type: "string"
+          example: "example@gmail.com"
+        first_name:
+          type: "string"
+          example: "Mark"
+        last_name:
+          type: "string"
+          example: "Elon"
+        phone_number:
+          type: "string"
+          example: "080100000000"
+        password:
+          type: "string"
+          example: "mypassword"
+        status:
+          type: "string"
+          example: "P"
+responses:
+  201:
+    description: When a user is successfully created
+    schema:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: "The User ID"
+          example: 1
+        first_name:
+          type: "string"
+          description: "The first name of the user"
+          example: "Mark"
+        last_name:
+          type: "string"
+          description: "The last name of the user"
+          example: "Elon"
+        phone_number:
+          type: "string"
+          description:  "The user phone number"
+          example: "08010000000"
+        email:
+          type: "string"
+          description: "The user email address"
+          example: "example@gmail.com"
+        status:
+          type: "string"
+          description: "The user status"
+          example: "P"
+
+  409:
+    description: When a user already exists
+  401:
+    description: Fails to perform operation due to authentication error
