@@ -1,7 +1,7 @@
 CREATE Users
 ---
 tags:
-  - users
+  - Users
 parameters:
   - in: header
     name: Authorization
