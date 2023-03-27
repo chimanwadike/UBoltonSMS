@@ -1,0 +1,56 @@
+UPDATE course
+---
+basePath: /api/v1
+paths:
+  /courses/{id}:
+    put:
+      summary: Update a course
+      tags:
+        - courses
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: The ID of the course to update
+          schema:
+            type: integer
+        - in: body
+          name: body
+          required: true
+          description: The updated course object
+          schema:
+            type: object
+            properties:
+              code:
+                type: string
+                example: "SWE72001"
+              title:
+                type: string
+                example: "Advanced Software Engineering"
+              description:
+                type: string
+                example: "Advanced topics in software engineering"
+      responses:
+        200:
+          description: Course updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    example: 1
+                  code:
+                    type: string
+                    example: "SWE72001"
+                  title:
+                    type: string
+                    example: "Advanced Software Engineering"
+                  description:
+                    type: string
+                    example: "Advanced topics in software engineering"
+        401:
+          description: Unauthorized access
+        404:
+          description: Course not found

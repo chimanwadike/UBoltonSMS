@@ -1,13 +1,13 @@
-Modify semester
+Modify venue
 ---
 tags:
-  - Semesters
+  - Venues
 parameters:
   - in: header
     name: Authorization
-    required: true
+    required: false
   - name: body
-    description: The body should contain the semester data
+    description: The body should contain the venue data
     in: body
     required: true
     schema:
@@ -15,25 +15,21 @@ parameters:
       required:
         - "id"
         - "name"
-        - "start_date"
-        - "end_date"
+        - "building"
       properties:
         id:
           type: "integer"
           example: 1
         name:
           type: "string"
-          example: "1st Semester"
+          example: "B01"
         start_date:
-          type: "date"
-          example: "2023-08-19"
-        end_date:
-          type: "date"
-          example: "2023-08-19"
+          type: "string"
+          example: "Senate House"
 responses:
   200:
-    description: When a semester is successfully updated
+    description: When a venue is successfully updated
   404:
-    description: When a semester is not found
+    description: When a venue is not found
   401:
     description: Fails to perform operation due to authentication error

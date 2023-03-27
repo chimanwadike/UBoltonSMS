@@ -1,12 +1,12 @@
-DELETE semesters
+DELETE venues
 ---
 tags:
-  - Semesters
+  - Venues
 
 parameters:
   - in: header
     name: Authorization
-    required: true
+    required: false
   - in: path
     name: id
     required: true

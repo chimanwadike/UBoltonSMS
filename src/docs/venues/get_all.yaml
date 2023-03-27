@@ -1,16 +1,16 @@
-GET semesters
+GET venues
 ---
 tags:
-  - Semesters
+  - Venues
 
 parameters:
   - in: header
     name: Authorization
-    required: true
+    required: false
 
 responses:
   200:
-    description: List of semesters
+    description: List of venues
     schema:
       $ref: '#/definitions/Items'
   401:
@@ -29,17 +29,13 @@ definitions:
           properties:
             id:
               type: integer
-              description: 'The semester ID'
+              description: 'The venue ID'
               example: 1
             name:
               type: "string"
-              description: 'The title of the semester'
-              example: "1st Semester"
-            start_date:
-              type: "date"
-              description: 'The semester start date'
-              example: "2023-08-19"
-            end_date:
-              type: "date"
-              description: 'The semester end date'
-              example: "2023-08-19"
+              description: 'The title of the venue'
+              example: "B01"
+            building:
+              type: "string"
+              description: 'The building of venue'
+              example: "Senate House"

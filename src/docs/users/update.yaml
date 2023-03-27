@@ -1,0 +1,48 @@
+Modify users
+---
+tags:
+  - Users
+parameters:
+  - in: header
+    name: Authorization
+    required: false
+  - name: body
+    description: The body should contain the user data
+    in: body
+    required: true
+    schema:
+      type: object
+      required:
+        - "id"
+        - "first_name"
+        - "last_name"
+        - "email"
+        - "phone_number"
+        - "status"
+      properties:
+        email:
+          type: "string"
+          example: "example@gmail.com"
+        first_name:
+          type: "string"
+          example: "Mark"
+        last_name:
+          type: "string"
+          example: "Elon"
+        phone_number:
+          type: "string"
+          example: "080100000000"
+        password:
+          type: "string"
+          example: "mypassword"
+        status:
+          type: "string"
+          example: "P"
+
+responses:
+  200:
+    description: When a user is successfully updated
+  404:
+    description: When a user is not found
+  401:
+    description: Fails to perform operation due to authentication error
