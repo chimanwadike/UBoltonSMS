@@ -1,7 +1,7 @@
-CREATE Users
+User registration
 ---
 tags:
-  - Users
+  - Auth
 parameters:
   - in: header
     name: Authorization
@@ -18,7 +18,6 @@ parameters:
         - "last_name"
         - "phone_number"
         - "password"
-        - "status"
 
       properties:
         email:
@@ -36,9 +35,7 @@ parameters:
         password:
           type: "string"
           example: "mypassword"
-        status:
-          type: "string"
-          example: "P"
+
 responses:
   201:
     description: When a user is successfully created
@@ -65,10 +62,6 @@ responses:
           type: "string"
           description: "The user email address"
           example: "example@gmail.com"
-        status:
-          type: "string"
-          description: "The user status"
-          example: "P"
 
   409:
     description: When a user already exists

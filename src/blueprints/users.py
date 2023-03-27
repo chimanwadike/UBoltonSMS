@@ -6,12 +6,6 @@ from src.services.user_service import get_users, get_user, edit_user, delete_use
 user = Blueprint("user", __name__, url_prefix="/api/v1/users")
 
 
-@user.post('/')
-@swag_from('../docs/users/create.yaml')
-def create():
-    return create_user(request)
-
-
 @user.get('/')
 @swag_from('../docs/users/get_all.yaml')
 def get_all():
