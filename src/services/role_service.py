@@ -11,13 +11,13 @@ from src.database.database_context import db, Role
 def get_roles(self):
     page = self.args.get('page', 1, type=int)
 
-    per_page = self.args.get('per_page', 5, type=int)
+    per_page = self.args.get('per_page', 20, type=int)
 
     roles = Role.query.paginate(page=page, per_page=per_page)
 
     data = []
     for role in roles.items:
-        data.append({'id': role.id, 'name': role.name})
+        data.append({'id': role.id, 'name': role.name, 'display_name': role.display_name})
 
     meta = {
         'page': roles.page,
@@ -56,6 +56,7 @@ def create_role(self):
 
 
     role_exist = Role.query \
+        .filter(Role.display_name == display_name) \
         .filter(Role.name == name) \
         .first()
 
