@@ -3,7 +3,7 @@ from src.constants.http_status_codes import *
 from src.database.database_context import db, User
 import validators
 from werkzeug.security import check_password_hash, generate_password_hash
-from flask_jwt_extended import create_access_token, create_refresh_token
+from flask_jwt_extended import create_access_token, create_refresh_token, get_jwt_identity
 
 
 # register user
@@ -68,3 +68,9 @@ def authenticate(args):
             }), HTTP_200_OK
 
         return jsonify({'error': 'Wrong credentials'}), HTTP_401_UNAUTHORIZED
+
+
+def token_refresh(args):
+    user_id = get_jwt_identity()
+    access_token = create_access_token(identity=user_id)
+    return jsonify({'access_token': access_token})
