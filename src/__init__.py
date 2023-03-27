@@ -2,6 +2,7 @@ from flask import Flask, jsonify
 import os
 from src.blueprints.auth import auth
 from src.blueprints.semesters import semesters
+from src.blueprints.roles import roles
 from src.constants.http_status_codes import HTTP_500_INTERNAL_SERVER_ERROR
 from src.database.database_context import db
 from flasgger import Swagger, swag_from
@@ -29,6 +30,7 @@ def create_app(test_config=None):
 
     app.register_blueprint(auth)
     app.register_blueprint(semesters)
+    app.register_blueprint(roles)
 
     Swagger(app, config=swagger_config, template=template)
 
