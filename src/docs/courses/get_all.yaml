@@ -1,32 +1,45 @@
 GET courses
 ---
-basePath: /api/v1
 tags:
-  - name: courses
-    description: Operations related to courses
-paths:
-  /courses:
-    get:
-      summary: Retrieve all courses
-      description: Returns a list of all courses in the system.
-      responses:
-        200:
-          description: A list of courses
-          schema:
-            type: array
-            items:
-              $ref: '#/definitions/Course'
-        401:
-          description: Unauthorized access
-    definitions:
-      Course:
-        type: object
-        properties:
-          id:
-            type: integer
-          code:
-            type: string
-          title:
-            type: string
-          description:
-            type: string
+  - Courses
+
+parameters:
+  - in: header
+    name: Authorization
+    required: false
+
+responses:
+  200:
+    description: List of courses
+    schema:
+      $ref: '#/definitions/Items'
+  401:
+    description: Fails to perform operation due to authentication error
+
+definitions:
+  Items:
+    type: object
+    required:
+      - data
+    properties:
+      data:
+        type: array
+        items:
+          type: object
+          properties:
+            id:
+              type: integer
+              description: 'Course ID'
+              example: 1
+            code:
+              type: "string"
+              description: 'The course code'
+              example: "SWE 7101"
+            title:
+              type: "string"
+              description: 'The course title'
+              example: "Advance Software Development"
+            description:
+              type: "string"
+              description: 'The course description'
+              example: "This course explores advance software concepts"

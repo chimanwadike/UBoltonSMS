@@ -1,56 +1,39 @@
-UPDATE course
+Modify course
 ---
-basePath: /api/v1
-paths:
-  /courses/{id}:
-    put:
-      summary: Update a course
-      tags:
-        - courses
-      parameters:
-        - in: path
-          name: id
-          required: true
-          description: The ID of the course to update
-          schema:
-            type: integer
-        - in: body
-          name: body
-          required: true
-          description: The updated course object
-          schema:
-            type: object
-            properties:
-              code:
-                type: string
-                example: "SWE72001"
-              title:
-                type: string
-                example: "Advanced Software Engineering"
-              description:
-                type: string
-                example: "Advanced topics in software engineering"
-      responses:
-        200:
-          description: Course updated successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  id:
-                    type: integer
-                    example: 1
-                  code:
-                    type: string
-                    example: "SWE72001"
-                  title:
-                    type: string
-                    example: "Advanced Software Engineering"
-                  description:
-                    type: string
-                    example: "Advanced topics in software engineering"
-        401:
-          description: Unauthorized access
-        404:
-          description: Course not found
+tags:
+  - Courses
+parameters:
+  - in: header
+    name: Authorization
+    required: false
+  - name: body
+    description: The body should contain the course data
+    in: body
+    required: true
+    schema:
+      type: object
+      required:
+        - "id"
+        - "code"
+        - "title"
+        - "description"
+      properties:
+        id:
+          type: "integer"
+          example: 1
+        code:
+          type: "string"
+          example: "SWE 7101"
+        title:
+          type: "string"
+          example: "Advance Software Development"
+        description:
+          type: "string"
+          example: "This course explores advance software concepts"
+responses:
+  200:
+    description: When a course is successfully updated
+  404:
+    description: When a course is not found
+  401:
+    description: Fails to perform operation due to authentication error
