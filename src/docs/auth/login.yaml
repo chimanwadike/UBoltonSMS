@@ -1,0 +1,46 @@
+User login
+---
+tags:
+  - Auth
+parameters:
+  - in: header
+    name: Authorization
+    required: false
+  - name: body
+    description: The body should contain the user data
+    in: body
+    required: true
+    schema:
+      type: object
+      required:
+        - "email"
+        - "password"
+
+      properties:
+        email:
+          type: "string"
+          example: "example@gmail.com"
+        password:
+          type: "string"
+          example: "mypassword"
+
+responses:
+  200:
+    description: When a user is successfully logged in
+    schema:
+      type: object
+      properties:
+        user:
+          type: object
+          description: "response object"
+          properties:
+            access_token:
+              type: "string"
+            refresh_token:
+              type: "string"
+            email:
+              type: "string"
+              description: "The user email address"
+              example: "example@gmail.com"
+  401:
+    description: When invalid credentials is supplied

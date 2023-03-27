@@ -1,22 +1,22 @@
-DELETE semesters
+DELETE users
 ---
 tags:
-  - Semesters
+  - Users
 
 parameters:
   - in: header
     name: Authorization
-    required: true
+    required: false
   - in: path
     name: id
     required: true
 
 responses:
   204:
-    description: When item is successfully deleted
+    description: When user is successfully deleted
     schema:
       type: object
   404:
-    description: When item is not found
+    description: When user is not found
   401:
     description: Fails to perform operation due to authentication error

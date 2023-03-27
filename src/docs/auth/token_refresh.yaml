@@ -1,0 +1,19 @@
+User token refresh
+---
+tags:
+  - Auth
+parameters:
+  - in: header
+    name: Authorization
+    required: true
+
+responses:
+  200:
+    description: When a user token is successfully refreshed
+    schema:
+      type: object
+      properties:
+        access_token:
+          type: "string"
+  401:
+    description: When invalid credentials is supplied
