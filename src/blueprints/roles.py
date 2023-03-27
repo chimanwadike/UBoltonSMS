@@ -6,13 +6,13 @@ roles = Blueprint("roles", __name__, url_prefix="/api/v1/roles")
 
 
 @roles.get('/')
-#@swag_from('../docs/roles/get_all.yaml')
+@swag_from('../docs/roles/get_all.yaml')
 def get_all():
     return get_roles(request)
 
 
 @roles.get('/<int:id>')
-#@swag_from('../docs/roles/get.yaml')
+@swag_from('../docs/roles/get.yaml')
 def get_role(id):
     return get_role(request, id)
 
@@ -24,13 +24,13 @@ def create():
 
 
 @roles.delete('/<int:id>')
-#@swag_from('../docs/roles/delete.yaml')
+@swag_from('../docs/roles/delete.yaml')
 def delete(id):
     return delete_role(request, id)
 
 
 @roles.put('/<int:id>')
 @roles.patch('/<int:id>')
-#@swag_from('../docs/roles/update.yaml')
+@swag_from('../docs/roles/update.yaml')
 def get(id):
     return edit_role(request, id)
