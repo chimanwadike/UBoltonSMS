@@ -67,7 +67,7 @@ def authenticate(args):
                 }
             }), HTTP_200_OK
 
-        return jsonify({'error': 'Wrong credentials'}), HTTP_401_UNAUTHORIZED
+    return jsonify({'error': 'Wrong credentials'}), HTTP_401_UNAUTHORIZED
 
 
 def token_refresh(args):
