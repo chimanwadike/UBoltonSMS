@@ -5,7 +5,7 @@ tags:
 parameters:
   - in: header
     name: Authorization
-    required: false
+    required: true
   - name: body
     description: The body should contain the semester data
     in: body

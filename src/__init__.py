@@ -9,6 +9,7 @@ from src.constants.http_status_codes import HTTP_500_INTERNAL_SERVER_ERROR
 from src.database.database_context import db
 from flasgger import Swagger, swag_from
 from src.config.swagger import template, swagger_config
+from flask_jwt_extended import JWTManager
 
 
 def create_app(test_config=None):
@@ -20,6 +21,7 @@ def create_app(test_config=None):
             SECRET_KEY=os.environ.get("SECRET_KEY"),
             SQLALCHEMY_DATABASE_URI=os.environ.get("SQLALCHEMY_DB_URI"),
             SQLALCHEMY_TRACK_MODIFICATIONS=True,
+            JWT_SECRET_KEY=os.environ.get('JWT_SECRET_KEY'),
        SWAGGER={'title': 'UBolton API',
                 'uiversion': 3}
 
@@ -29,6 +31,7 @@ def create_app(test_config=None):
 
     db.app = app
     db.init_app(app)
+    JWTManager(app)
 
     app.register_blueprint(auth)
     app.register_blueprint(semesters)
