@@ -1,46 +1,39 @@
 GET course
 ---
-basePath: /api/v1
 tags:
-  - name: courses
-    description: Operations related to courses
-paths:
-  /courses/{id}:
-    get:
-      summary: Get course by ID
-      parameters:
-        - name: id
-          in: path
-          description: ID of course to retrieve
-          required: true
+  - Courses
+
+parameters:
+  - in: header
+    name: Authorization
+    required: false
+  - in: path
+    name: id
+    required: true
+
+responses:
+  200:
+    description: List of courses
+    schema:
+      type: object
+      properties:
+        id:
           type: integer
-      responses:
-        200:
-          description: Successfully retrieved course
-          schema:
-            type: object
-            items:
-              $ref: '#/definitions/Course'
-            properties:
-              id:
-                type: integer
-                description: ID of the course
-              code:
-                type: string
-                description: Course code
-              title:
-                type: string
-                description: Course title
-              description:
-                type: string
-                description: Course description
-        404:
-          description: Course not found
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                description: Error message
-        401:
-          description: Unauthorized access
+          description: 'Course ID'
+          example: 1
+        code:
+          type: "string"
+          description: 'The course code'
+          example: "SWE 7101"
+        title:
+          type: "string"
+          description: 'The course title'
+          example: "Advance Software Development"
+        description:
+          type: "string"
+          description: 'The course description'
+          example: "This course explores advance software concepts"
+  404:
+    description: When item is not found
+  401:
+    description: Fails to perform operation due to authentication error
