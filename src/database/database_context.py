@@ -5,6 +5,7 @@ db = SQLAlchemy()
 
 
 class User(db.Model):
+    __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
     first_name = db.Column(db.String(50), nullable=False)
     last_name = db.Column(db.String(50), nullable=False)
@@ -14,9 +15,25 @@ class User(db.Model):
     status = db.Column(db.String(15), nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.now())
     deleted_at = db.Column(db.DateTime, nullable=True)
+    roles = db.relationship('Role', secondary='user_roles', back_populates='users')
 
     def __repr__(self) -> str:
         return 'User>>> {self.id}'
+
+
+class Role(db.Model):
+    __tablename__ = 'roles'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(50), nullable=False)
+    display_name = db.Column(db.String(50), nullable=False)
+    users = db.relationship('User', secondary='user_roles', back_populates='roles')
+
+
+user_roles = db.Table('user_roles',
+                      db.Column('id', db.Integer, primary_key=True),
+                      db.Column('user_id', db.Integer, db.ForeignKey('users.id')),
+                      db.Column('role_id', db.Integer, db.ForeignKey('roles.id'))
+                      )
 
 
 class Semester(db.Model):
@@ -60,15 +77,8 @@ class Course(db.Model):
     def __repr__(self) -> str:
         return 'Course>>> {self.id}'
 
-
-class Role(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(50), nullable=False)
-    display_name = db.Column(db.String(50), nullable=False)
-
     def __repr__(self) -> str:
         return 'Role>>> {self.id}'
-
 
 # class UserRole(db.Model):
 #     id = db.Column(db.Integer, primary_key=True)
