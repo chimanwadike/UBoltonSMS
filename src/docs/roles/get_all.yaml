@@ -1,0 +1,41 @@
+GET roles
+---
+tags:
+  - Roles
+
+parameters:
+  - in: header
+    name: Authorization
+    required: false
+
+responses:
+  200:
+    description: List of roles
+    schema:
+      $ref: '#/definitions/Items'
+  401:
+    description: Fails to perform operation due to authentication error
+
+definitions:
+  Items:
+    type: object
+    required:
+      - data
+    properties:
+      data:
+        type: array
+        items:
+          type: object
+          properties:
+            id:
+              type: integer
+              description: 'The role ID'
+              example: 1
+            name:
+              type: "string"
+              description: 'The name of the role'
+              example: "B01"
+            display_name:
+              type: "string"
+              description: 'Displaying the name'
+              example: "chapel"

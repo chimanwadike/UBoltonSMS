@@ -1,0 +1,35 @@
+GET roles
+---
+tags:
+  - Roles
+
+parameters:
+  - in: header
+    name: Authorization
+    required: false
+  - in: path
+    name: id
+    required: true
+
+responses:
+  200:
+    description: List of roles
+    schema:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: 'The role ID'
+          example: 1
+        name:
+          type: "string"
+          description: 'The name of the role'
+          example: "s01"
+        display_name:
+          type: "string"
+          description: 'The name of role'
+          example: "chapel"
+  404:
+    description: When item is not found
+  401:
+    description: Fails to perform operation due to authentication error

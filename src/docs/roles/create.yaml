@@ -1,0 +1,49 @@
+CREATE role
+---
+tags:
+  - Roles
+parameters:
+  - in: header
+    name: Authorization
+    required: false
+  - name: body
+    description: The body should contain the semester data
+    in: body
+    required: true
+    schema:
+      type: object
+      required:
+        - "name"
+        - "display_name"
+
+      properties:
+        name:
+          type: "string"
+          example: "Administrator"
+        display_name:
+          type: "string"
+          example: "Administrator"
+
+responses:
+  201:
+    description: When a role is successfully created
+    schema:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: 'The role ID'
+          example: 1
+        name:
+          type: "string"
+          description: 'The title of the role'
+          example: "Administrator"
+        display_name:
+          type: "string"
+          description: 'user role'
+          example: "Administrator"
+
+  409:
+    description: When a role already exists
+  401:
+    description: Fails to perform operation due to authentication errorCREATE roles
