@@ -1,0 +1,35 @@
+Modify roles
+---
+tags:
+  - Roles
+parameters:
+  - in: header
+    name: Authorization
+    required: false
+  - name: body
+    description: The body should contain the roles data
+    in: body
+    required: true
+    schema:
+      type: object
+      required:
+        - "id"
+        - "name"
+        - "display_name"
+      properties:
+        id:
+          type: "integer"
+          example: 1
+        name:
+          type: "string"
+          example: "K01"
+        start_date:
+          type: "string"
+          example: "chapel"
+responses:
+  200:
+    description: When a role is successfully updated
+  404:
+    description: When a role is not found
+  401:
+    description: Fails to perform operation due to authentication error

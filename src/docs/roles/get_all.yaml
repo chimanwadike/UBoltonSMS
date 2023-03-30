@@ -1,7 +1,7 @@
-GET courses
+GET roles
 ---
 tags:
-  - Courses
+  - Roles
 
 parameters:
   - in: header
@@ -10,7 +10,7 @@ parameters:
 
 responses:
   200:
-    description: List of courses
+    description: List of roles
     schema:
       $ref: '#/definitions/Items'
   401:
@@ -29,17 +29,13 @@ definitions:
           properties:
             id:
               type: integer
-              description: 'Course ID'
+              description: 'The role ID'
               example: 1
-            code:
+            name:
               type: "string"
-              description: 'The course code'
-              example: "SWE 7101"
-            title:
+              description: 'The name of the role'
+              example: "B01"
+            display_name:
               type: "string"
-              description: 'The course title'
-              example: "Advance Software Development"
-            description:
-              type: "string"
-              description: 'The course description'
-              example: "This course explores advance software concepts"
+              description: 'Displaying the name'
+              example: "chapel"

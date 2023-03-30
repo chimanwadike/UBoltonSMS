@@ -1,7 +1,7 @@
-DELETE course
+DELETE roles
 ---
 tags:
-  - Courses
+  - Roles
 
 parameters:
   - in: header

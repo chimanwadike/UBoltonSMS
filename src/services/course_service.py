@@ -23,13 +23,7 @@ def create_course(data):
     db.session.add(new_course)
     db.session.commit()
 
-    return jsonify(
-        {'id': new_course.id,
-         'code': new_course.code,
-         'title': new_course.title,
-         'description': new_course.description
-         }
-    ), HTTP_201_CREATED
+    return jsonify(new_course.to_dict()), HTTP_201_CREATED
 
 
 def get_courses(args):
