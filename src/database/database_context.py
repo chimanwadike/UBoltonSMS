@@ -91,7 +91,7 @@ class Venue(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(45), nullable=False)
     building = db.Column(db.String(45))
-    lecture_schedules = db.relationship('LectureSchedule', back_populates='venue')
+    lecture_schedules = db.relationship('LectureSchedule', back_populates='venues')
 
     def __repr__(self) -> str:
         return 'Venue>>> {self.id}'
@@ -133,7 +133,7 @@ class LectureSchedule(db.Model):
     end_time = db.Column(db.DateTime, nullable=False)
     one_off_date = db.Column(db.DateTime)
     is_recurring = db.Column(db.Boolean)
-    is_online = db.Column(db.Boolean, nullable=False, default=True)
+    is_online = db.Column(db.Boolean, nullable=False, default=False)
 
     course = db.relationship('Course', back_populates='lecture_schedules')
     semester = db.relationship('Semester', back_populates='lecture_schedules')
@@ -170,11 +170,3 @@ lecture_session_attendance = db.Table('lecture_session_attendance',
                                       db.Column('user_id', db.Integer, db.ForeignKey('users.id')),
                                       db.Column('attendance_status_code', db.String(5))
                                       )
-
-# class UserRole(db.Model):
-#     id = db.Column(db.Integer, primary_key=True)
-#     user_id = db.Column(db.Integer, nullable=False)
-#     role_id = db.Column(db.Integer, nullable=False)
-#
-#     def __repr__(self) -> str:
-#         return 'UserRole>>> {self.id}'
