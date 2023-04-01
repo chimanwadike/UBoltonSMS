@@ -3,8 +3,32 @@ from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
 
+lecture_schedule_student_enrolment = db.Table('lecture_schedule_student_enrolment',
+                                              db.Column('id', db.Integer, primary_key=True),
+                                              db.Column('lecture_schedule_id', db.Integer,
+                                                        db.ForeignKey('lecture_schedules.id')),
+                                              db.Column('user_id', db.Integer, db.ForeignKey('users.id'))
+                                              )
+
+student_course_enrollment = db.Table('student_course_enrollment',
+                                     db.Column('id', db.Integer, primary_key=True),
+                                     db.Column('course_id', db.Integer,
+                                               db.ForeignKey('courses.id')),
+                                     db.Column('user_id', db.Integer, db.ForeignKey('users.id')),
+                                     db.Column('semester_id', db.Integer, db.ForeignKey('semesters.id'))
+                                     )
+
+tutor_course_enrollment = db.Table('tutor_course_enrollment',
+                                   db.Column('id', db.Integer, primary_key=True),
+                                   db.Column('course_id', db.Integer,
+                                             db.ForeignKey('courses.id')),
+                                   db.Column('user_id', db.Integer, db.ForeignKey('users.id')),
+                                   db.Column('semester_id', db.Integer, db.ForeignKey('semesters.id'))
+                                   )
+
 
 class User(db.Model):
+    __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
     first_name = db.Column(db.String(50), nullable=False)
     last_name = db.Column(db.String(50), nullable=False)
@@ -14,40 +38,76 @@ class User(db.Model):
     status = db.Column(db.String(15), nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.now())
     deleted_at = db.Column(db.DateTime, nullable=True)
+    roles = db.relationship('Role', secondary='user_roles', back_populates='users')
+    lecture_schedules = db.relationship('LectureSchedule', secondary=lecture_schedule_student_enrolment,
+                                        back_populates='users')
+    lecture_sessions_attended = db.relationship('LectureSession', secondary='lecture_session_attendance',
+                                                back_populates='users')
+    courses = db.relationship('Course', secondary=student_course_enrollment, back_populates='students')
+    tutor_courses = db.relationship('Course', secondary=tutor_course_enrollment, back_populates='tutors')
 
     def __repr__(self) -> str:
         return 'User>>> {self.id}'
 
 
-class Semester(db.Model):
+class Role(db.Model):
+    __tablename__ = 'roles'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), nullable=False)
-    start_date = db.Column(db.DateTime, nullable=False)
-    end_date = db.Column(db.DateTime, nullable=False)
-    status = db.Column(db.String(15), nullable=True)
+    display_name = db.Column(db.String(50), nullable=False)
+    users = db.relationship('User', secondary='user_roles', back_populates='roles')
+
+    def __repr__(self) -> str:
+        return 'Role>>> {self.id}'
+
+
+user_roles = db.Table('user_roles',
+                      db.Column('id', db.Integer, primary_key=True),
+                      db.Column('user_id', db.Integer, db.ForeignKey('users.id')),
+                      db.Column('role_id', db.Integer, db.ForeignKey('roles.id'))
+                      )
+
+
+class Semester(db.Model):
+    __tablename__ = 'semesters'
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String(45), nullable=False)
+    start_date = db.Column(db.DateTime)
+    end_date = db.Column(db.DateTime)
+    status = db.Column(db.String(20))
     created_at = db.Column(db.DateTime, default=datetime.now())
-    deleted_at = db.Column(db.DateTime, nullable=True)
+    deleted_at = db.Column(db.DateTime)
+    lecture_schedules = db.relationship('LectureSchedule', back_populates='semester')
+    courses = db.relationship('Course', secondary=student_course_enrollment, back_populates='semesters')
 
     def __repr__(self) -> str:
         return 'Semester>>> {self.id}'
 
 
 class Venue(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(50), nullable=False)
-    building = db.Column(db.String(50), nullable=True)
-    created_at = db.Column(db.DateTime, default=datetime.now())
-    deleted_at = db.Column(db.DateTime, nullable=True)
+    __tablename__ = 'venues'
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String(45), nullable=False)
+    building = db.Column(db.String(45))
+    lecture_schedules = db.relationship('LectureSchedule', back_populates='venue')
 
     def __repr__(self) -> str:
         return 'Venue>>> {self.id}'
 
 
 class Course(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    code = db.Column(db.String(15), nullable=False)
-    title = db.Column(db.String(50), nullable=False)
-    description = db.Column(db.String(50), nullable=True)
+    __tablename__ = 'courses'
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String(45), nullable=False)
+    description = db.Column(db.String(100))
+    created_at = db.Column(db.DateTime, default=datetime.now())
+    lecture_schedules = db.relationship('LectureSchedule', back_populates='course')
+    students = db.relationship('User', secondary=student_course_enrollment, back_populates='courses')
+    tutors = db.relationship('User', secondary=tutor_course_enrollment, back_populates='tutor_courses')
+    semesters = db.relationship('Semester', secondary=student_course_enrollment, back_populates='courses')
 
     def to_dict(self):
         return {
@@ -61,14 +121,55 @@ class Course(db.Model):
         return 'Course>>> {self.id}'
 
 
-class Role(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(50), nullable=False)
-    display_name = db.Column(db.String(50), nullable=False)
+class LectureSchedule(db.Model):
+    __tablename__ = 'lecture_schedules'
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    course_id = db.Column(db.Integer, db.ForeignKey('courses.id'), nullable=False)
+    semester_id = db.Column(db.Integer, db.ForeignKey('semesters.id'), nullable=False)
+    venue_id = db.Column(db.Integer, db.ForeignKey('venues.id'))
+    day = db.Column(db.String(10))
+    start_time = db.Column(db.DateTime, nullable=False)
+    end_time = db.Column(db.DateTime, nullable=False)
+    one_off_date = db.Column(db.DateTime)
+    is_recurring = db.Column(db.Boolean)
+    is_online = db.Column(db.Boolean, nullable=False, default=True)
+
+    course = db.relationship('Course', back_populates='lecture_schedules')
+    semester = db.relationship('Semester', back_populates='lecture_schedules')
+    venue = db.relationship('Venue', back_populates='lecture_schedules')
+    users = db.relationship('User', secondary=lecture_schedule_student_enrolment, back_populates='lecture_schedules')
 
     def __repr__(self) -> str:
-        return 'Role>>> {self.id}'
+        return 'LectureSchedule>>> {self.id}'
 
+
+class LectureSession(db.Model):
+    __tablename__ = 'lecture_sessions'
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    lecture_schedule_id = db.Column(db.Integer, db.ForeignKey('lecture_schedules.id'), nullable=False)
+    start_time = db.Column(db.DateTime, nullable=False)
+    end_time = db.Column(db.DateTime, nullable=False)
+    allow_self_registration = db.Column(db.Boolean, default=True)
+    check_in_code = db.Column(db.String(10))
+    status = db.Column(db.String(10))
+    created_at = db.Column(db.DateTime, default=datetime.now())
+    deleted_at = db.Column(db.DateTime)
+
+    # lecture_schedule = db.relationship('LectureSchedule', back_populates='lecture_sessions')
+    users = db.relationship('User', secondary='lecture_session_attendance', back_populates='lecture_sessions')
+
+    def __repr__(self) -> str:
+        return 'LectureSession>>> {self.id}'
+
+
+lecture_session_attendance = db.Table('lecture_session_attendance',
+                                      db.Column('id', db.Integer, primary_key=True, autoincrement=True),
+                                      db.Column('lecture_session_id', db.Integer, db.ForeignKey('lecture_sessions.id')),
+                                      db.Column('user_id', db.Integer, db.ForeignKey('users.id')),
+                                      db.Column('attendance_status_code', db.String(5))
+                                      )
 
 # class UserRole(db.Model):
 #     id = db.Column(db.Integer, primary_key=True)
