@@ -41,10 +41,9 @@ class User(db.Model):
     roles = db.relationship('Role', secondary='user_roles', back_populates='users')
     lecture_schedules = db.relationship('LectureSchedule', secondary=lecture_schedule_student_enrolment,
                                         back_populates='users')
-    lecture_sessions_attended = db.relationship('LectureSession', secondary='lecture_session_attendance',
-                                                back_populates='users')
-    courses = db.relationship('Course', secondary=student_course_enrollment, back_populates='students')
-    tutor_courses = db.relationship('Course', secondary=tutor_course_enrollment, back_populates='tutors')
+    lecture_sessions_attended = db.relationship('LectureSessionAttendance', back_populates='user')
+    # courses = db.relationship('Course', secondary=student_course_enrollment, back_populates='user')
+    # tutor_courses = db.relationship('Course', secondary=tutor_course_enrollment, back_populates='user')
 
     def __repr__(self) -> str:
         return 'User>>> {self.id}'
@@ -79,7 +78,7 @@ class Semester(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.now())
     deleted_at = db.Column(db.DateTime)
     lecture_schedules = db.relationship('LectureSchedule', back_populates='semester')
-    courses = db.relationship('Course', secondary=student_course_enrollment, back_populates='semesters')
+    #courses = db.relationship('Course', secondary=student_course_enrollment, back_populates='semesters')
 
     def __repr__(self) -> str:
         return 'Semester>>> {self.id}'
@@ -105,9 +104,9 @@ class Course(db.Model):
     description = db.Column(db.String(100))
     created_at = db.Column(db.DateTime, default=datetime.now())
     lecture_schedules = db.relationship('LectureSchedule', back_populates='course')
-    students = db.relationship('User', secondary=student_course_enrollment, back_populates='courses')
-    tutors = db.relationship('User', secondary=tutor_course_enrollment, back_populates='tutor_courses')
-    semesters = db.relationship('Semester', secondary=student_course_enrollment, back_populates='courses')
+    #students = db.relationship('User', secondary=student_course_enrollment, back_populates='courses')
+    #tutors = db.relationship('User', secondary=tutor_course_enrollment, back_populates='tutor_courses')
+    #semesters = db.relationship('Semester', secondary=student_course_enrollment, back_populates='courses')
 
     def to_dict(self):
         return {
@@ -137,8 +136,9 @@ class LectureSchedule(db.Model):
 
     course = db.relationship('Course', back_populates='lecture_schedules')
     semester = db.relationship('Semester', back_populates='lecture_schedules')
-    venue = db.relationship('Venue', back_populates='lecture_schedules')
+    venues = db.relationship('Venue', back_populates='lecture_schedules')
     users = db.relationship('User', secondary=lecture_schedule_student_enrolment, back_populates='lecture_schedules')
+    lecture_sessions = db.relationship('LectureSession', back_populates='lecture_schedule')
 
     def __repr__(self) -> str:
         return 'LectureSchedule>>> {self.id}'
@@ -157,16 +157,20 @@ class LectureSession(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.now())
     deleted_at = db.Column(db.DateTime)
 
-    # lecture_schedule = db.relationship('LectureSchedule', back_populates='lecture_sessions')
-    users = db.relationship('User', secondary='lecture_session_attendance', back_populates='lecture_sessions')
+    lecture_schedule = db.relationship('LectureSchedule', back_populates='lecture_sessions')
 
     def __repr__(self) -> str:
         return 'LectureSession>>> {self.id}'
 
 
-lecture_session_attendance = db.Table('lecture_session_attendance',
-                                      db.Column('id', db.Integer, primary_key=True, autoincrement=True),
-                                      db.Column('lecture_session_id', db.Integer, db.ForeignKey('lecture_sessions.id')),
-                                      db.Column('user_id', db.Integer, db.ForeignKey('users.id')),
-                                      db.Column('attendance_status_code', db.String(5))
-                                      )
+class LectureSessionAttendance(db.Model):
+    __tablename__ = 'lecture_session_attendance'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    lecture_session_id = db.Column(db.Integer, db.ForeignKey('lecture_sessions.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    attendance_status_code = db.Column(db.String(5))
+    user = db.relationship('User', back_populates='lecture_sessions_attended')
+
+# lecture_session_attendance = db.Table('lecture_session_attendance', db.Column('id', db.Integer, primary_key=True,
+# autoincrement=True), db.Column('lecture_session_id', db.Integer, db.ForeignKey('lecture_sessions.id')),
+# db.Column('user_id', db.Integer, db.ForeignKey('users.id')), db.Column('attendance_status_code', db.String(5)) )
