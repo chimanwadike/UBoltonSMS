@@ -120,3 +120,14 @@ def edit_semester(self, id):
     ), HTTP_200_OK
 
 
+def get_current_semester():
+
+    now = datetime.now()
+    semester = Semester.query.filter(Semester.start_date <= now, Semester.end_date >= now).first()
+
+    if semester:
+        return semester.id
+    else:
+        return jsonify({'message': 'Semester not found'}), HTTP_404_NOT_FOUND
+
+
