@@ -116,6 +116,16 @@ def seed_lecture_schedules():
     db.session.commit()
 
 
+def seed_user_roles():
+    users = User.query.all()
+    roles = Role.query.all()
 
+    for user in users:
+        # Generate a random number of roles for each user
+        num_roles = fake.random_int(min=1, max=3)
+        user_roles = fake.random_elements(elements=roles, unique=True, length=num_roles)
+        user.roles.extend(user_roles)
+
+    db.session.commit()
 
 # seed_users()
