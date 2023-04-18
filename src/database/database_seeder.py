@@ -2,8 +2,8 @@ from datetime import datetime, timedelta
 from random import randint
 
 from faker import Faker
-from src.database.database_context import db, User, Role, Semester, Venue, Course, LectureSchedule, LectureSession, \
-    lecture_schedule_student_enrolment
+from src.database.database_context import db, User, Role, Semester, user_roles, Venue, Course, LectureSchedule, LectureSession, \
+    lecture_schedule_student_enrolment, student_course_enrollment
 from werkzeug.security import generate_password_hash
 
 
@@ -177,21 +177,58 @@ def seed_lecture_schedule_student_enrolment():
     for student in students:
         enrolments = randint(1, 5)  # Randomly generate number of enrolments (1 to 5)
 
-        # Loop through each enrolment
+
         for _ in range(enrolments):
             # Get a random LectureSchedule
             lecture_schedule = LectureSchedule.query.order_by(db.func.random()).first()
 
-            # Create a new enrolment with lecture_schedule_id and user_id
-            enrolment = lecture_schedule_student_enrolment.insert().values(
-                lecture_schedule_id=lecture_schedule.id,
-                user_id=student.id
-            )
+            # Check if the student has already been added to the lecture schedule
+            existing_enrollment = db.session.query(lecture_schedule_student_enrolment).filter_by(
+                user_id=student.id,
+                lecture_schedule_id=lecture_schedule.id
+            ).first()
 
-            # Execute the enrolment query
-            db.session.execute(enrolment)
+            if not existing_enrollment:
+                # Create a new enrolment with lecture_schedule_id and user_id
+                enrolment = lecture_schedule_student_enrolment.insert().values(
+                    lecture_schedule_id=lecture_schedule.id,
+                    user_id=student.id
+                )
 
-    # Commit the changes
+
+                db.session.execute(enrolment)
+
+
     db.session.commit()
 
+
+def seed_student_course_enrollment():
+    # Get all users with role_id of 2 (student)
+    students = User.query.join(User.roles).filter(Role.id == 2).all()
+
+    # Loop through each student and create enrolments
+    for student in students:
+        enrolments = randint(1, 5)  # Randomly generate number of enrolments (1 to 5)
+
+        for _ in range(enrolments):
+            # Get a random LectureSchedule
+            course = Course.query.order_by(db.func.random()).first()
+            semester = Semester.query.order_by(db.func.random()).first()
+
+            # Check if the student has already enrolled in the selected course
+            existing_enrollment = db.session.query(student_course_enrollment).filter_by(
+                user_id=student.id,
+                course_id=course.id
+            ).first()
+
+            if not existing_enrollment:
+                # Create a new enrollment with lecture_schedule_id and user_id
+                enrolment = student_course_enrollment.insert().values(
+                    course_id=course.id,
+                    user_id=student.id,
+                    semester_id=semester.id
+                )
+                db.session.execute(enrolment)
+
+    db.session.commit()
 # seed_users()
