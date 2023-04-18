@@ -2,8 +2,9 @@ from datetime import datetime, timedelta
 from random import randint
 
 from faker import Faker
-from src.database.database_context import db, User, Role, Semester, user_roles, Venue, Course, LectureSchedule, LectureSession, \
-    lecture_schedule_student_enrolment, student_course_enrollment
+from src.database.database_context import db, User, Role, Semester, user_roles, Venue, Course, LectureSchedule, \
+    LectureSession, \
+    lecture_schedule_student_enrolment, student_course_enrollment, tutor_course_enrollment
 from werkzeug.security import generate_password_hash
 
 
@@ -118,7 +119,7 @@ def seed_lecture_schedules():
 
     db.session.commit()
 
-
+# Seed data for user_roles association
 def seed_user_roles():
     users = User.query.all()
     roles = Role.query.all()
@@ -132,6 +133,7 @@ def seed_user_roles():
     db.session.commit()
 
 
+#logic for generating checkin code in the order "AA-BB-CC"
 def generate_check_in_code():
     # Generate random uppercase characters for each segment of the check-in code
     segment1 = fake.random_uppercase_letter() + fake.random_uppercase_letter()
@@ -140,6 +142,7 @@ def generate_check_in_code():
     check_in_code = f"{segment1}-{segment2}-{segment3}"
     return check_in_code
 
+#Seed data for lecture_sessions association
 def seed_lecture_sessions():
     # Query existing LectureSchedule objects to get their ids
     lecture_schedules = LectureSchedule.query.all()
@@ -169,6 +172,7 @@ def seed_lecture_sessions():
     db.session.commit()
 
 
+#Seed data for lecture_schedule_student_enrolment association
 def seed_lecture_schedule_student_enrolment():
     # Get all users with role_id of 2 (student)
     students = User.query.join(User.roles).filter(Role.id == 2).all()
@@ -202,6 +206,7 @@ def seed_lecture_schedule_student_enrolment():
     db.session.commit()
 
 
+#Seed data for student_course_enrollment
 def seed_student_course_enrollment():
     # Get all users with role_id of 2 (student)
     students = User.query.join(User.roles).filter(Role.id == 2).all()
@@ -231,4 +236,35 @@ def seed_student_course_enrollment():
                 db.session.execute(enrolment)
 
     db.session.commit()
-# seed_users()
+
+#Seed data for tutor_course_enrollment
+def seed_tutor_course_enrollment():
+    # Get all users with role_id of 3 (tutor)
+    tutors = User.query.join(User.roles).filter(Role.id == 3).all()
+
+    # Loop through each tutor and create enrolments
+    for tutor in tutors:
+        enrolments = randint(1, 5)  # Randomly generate number of enrolments (1 to 5)
+
+        for _ in range(enrolments):
+            # Get a random LectureSchedule
+            course = Course.query.order_by(db.func.random()).first()
+            semester = Semester.query.order_by(db.func.random()).first()
+
+            # Check if the student has already enrolled in the selected course
+            existing_enrollment = db.session.query(student_course_enrollment).filter_by(
+                user_id=tutor.id,
+                course_id=course.id
+            ).first()
+
+            if not existing_enrollment:
+                # Create a new enrollment with lecture_schedule_id and tutor_id
+                enrolment = tutor_course_enrollment.insert().values(
+                    course_id=course.id,
+                    user_id=tutor.id,
+                    semester_id=semester.id
+                )
+                db.session.execute(enrolment)
+
+    db.session.commit()
+
