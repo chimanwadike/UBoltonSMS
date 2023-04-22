@@ -144,14 +144,12 @@ def generate_check_in_code():
 
 #Seed data for lecture_sessions association
 def seed_lecture_sessions():
-    # Query existing LectureSchedule objects to get their ids
+    # Query existing LectureSchedule objects to get their ids and start/end times
     lecture_schedules = LectureSchedule.query.all()
-    lecture_schedule_ids = [schedule.id for schedule in lecture_schedules]
+    lecture_schedule_data = [(schedule.id, schedule.start_time, schedule.end_time) for schedule in lecture_schedules]
 
     for i in range(10):  # Create 10 lecture sessions
-        lecture_schedule_id = fake.random_element(elements=lecture_schedule_ids)
-        start_time = fake.date_time_this_decade()
-        end_time = start_time + timedelta(hours=fake.random_element(elements=(1, 3)))
+        lecture_schedule_id, start_time, end_time = fake.random_element(elements=lecture_schedule_data)
         allow_self_registration = fake.boolean()
         check_in_code = generate_check_in_code()  # Generate check-in code
         status = fake.random_element(elements=('active', 'completed'))
