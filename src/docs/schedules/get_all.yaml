@@ -1,0 +1,45 @@
+GET courses schedules
+---
+tags:
+  - Courses Schedules
+
+parameters:
+  - in: header
+    name: Authorization
+    required: false
+
+responses:
+  200:
+    description: List of course schedule
+    schema:
+      $ref: '#/definitions/Items'
+  401:
+    description: Fails to perform operation due to authentication error
+
+definitions:
+  Items:
+    type: object
+    required:
+      - data
+    properties:
+      data:
+        type: array
+        items:
+          type: object
+          properties:
+            id:
+              type: integer
+              description: 'Course ID'
+              example: 1
+            code:
+              type: "string"
+              description: 'The course code'
+              example: "SWE 7101"
+            title:
+              type: "string"
+              description: 'The course title'
+              example: "Advance Software Development"
+            description:
+              type: "string"
+              description: 'The course description'
+              example: "This course explores advance software concepts"
