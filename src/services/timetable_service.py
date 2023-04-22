@@ -1,6 +1,12 @@
+from datetime import datetime
+
 from flask import jsonify
+from sqlalchemy import text, column, desc
+from sqlalchemy.orm import load_only
+
 from src.constants.http_status_codes import *
-from src.database.database_context import db, Course, LectureSchedule, LectureSession
+from src.database.database_context import db, Course, LectureSchedule, LectureSession, TutorCourseAssignment, \
+    LectureScheduleUserEnrolment
 from src.utils.utility_functions import get_current_semester
 
 
@@ -34,8 +40,21 @@ def get_student_course_sessions(args):
 
 
 def get_tutor_course_sessions(args):
-    student_id = 1  # TODO:: change hardcoded value
-    return None
+    tutor_id = 1  # TODO:: change hardcoded value
+
+    assigned_course_schedule_ids = db.session.query(LectureScheduleUserEnrolment.lecture_schedule_id) \
+        .join(LectureScheduleUserEnrolment.lecture_schedule) \
+        .filter(LectureScheduleUserEnrolment.user_id == tutor_id, LectureScheduleUserEnrolment.user_type == 'tutor',
+                LectureSchedule.semester_id == get_current_semester())
+
+    lecture_sessions = LectureSession \
+        .query.order_by(desc(LectureSession.end_time)) \
+        .filter(LectureSession.lecture_schedule_id.in_(assigned_course_schedule_ids),
+                LectureSession.end_time <= datetime.now())
+
+    data = [session.to_dict() for session in lecture_sessions]
+
+    return jsonify({'data': data}), HTTP_200_OK
 
 
 def get_enrolled_course_students(args):
@@ -49,5 +68,5 @@ def get_tutor_assigned_courses(args):
 
 
 def get_tutor_assigned_course_schedule(args):
-    student_id = 1  # TODO:: change hardcoded value
+    tutor_id = 1  # TODO:: change hardcoded value
     return None
