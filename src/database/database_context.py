@@ -191,6 +191,17 @@ class LectureSession(db.Model):
 
     lecture_schedule = db.relationship('LectureSchedule', back_populates='lecture_sessions')
 
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'course': self.lecture_schedule.course.to_dict(),
+            'venue': self.lecture_schedule.venues.to_dict(),
+            'start_time': self.start_time,
+            'end_time': self.end_time,
+            'day': self.lecture_schedule.day
+        }
+
+
     def __repr__(self) -> str:
         return 'LectureSession>>> {self.id}'
 
@@ -210,6 +221,8 @@ class LectureScheduleUserEnrolment(db.Model):
     lecture_schedule_id = db.Column(db.Integer, db.ForeignKey('lecture_schedules.id'))
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     user_type = db.Column(db.String(10), default='student')
+
+    lecture_schedule = db.relationship('LectureSchedule')
 
 
 class StudentCourseEnrolment(db.Model):

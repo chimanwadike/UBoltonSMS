@@ -174,8 +174,8 @@ def seed_lecture_sessions():
 
             lecture_session = LectureSession(
                 lecture_schedule_id=schedule.id,
-                start_time=schedule.start_time + timedelta(weeks=1),
-                end_time=schedule.end_time + timedelta(weeks=1),
+                start_time=schedule.start_time + timedelta(weeks=i),
+                end_time=schedule.end_time + timedelta(weeks=i),
                 allow_self_registration=allow_self_registration,
                 # check_in_code=check_in_code,
                 status=status,
