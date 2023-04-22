@@ -1,5 +1,6 @@
 from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
+import json
 
 db = SQLAlchemy()
 
@@ -80,6 +81,14 @@ class Semester(db.Model):
     lecture_schedules = db.relationship('LectureSchedule', back_populates='semester')
     #courses = db.relationship('Course', secondary=student_course_enrollment, back_populates='semesters')
 
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'start_date': self.start_date,
+            'end_date': self.end_date
+        }
+
     def __repr__(self) -> str:
         return 'Semester>>> {self.id}'
 
@@ -91,6 +100,13 @@ class Venue(db.Model):
     name = db.Column(db.String(45), nullable=False)
     building = db.Column(db.String(45))
     lecture_schedules = db.relationship('LectureSchedule', back_populates='venues')
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'building': self.building
+        }
 
     def __repr__(self) -> str:
         return 'Venue>>> {self.id}'
@@ -111,8 +127,7 @@ class Course(db.Model):
     def to_dict(self):
         return {
             'id': self.id,
-            'code': self.code,
-            'title': self.title,
+            'name': self.name,
             'description': self.description
         }
 
@@ -139,6 +154,19 @@ class LectureSchedule(db.Model):
     venues = db.relationship('Venue', back_populates='lecture_schedules')
     users = db.relationship('User', secondary=lecture_schedule_student_enrolment, back_populates='lecture_schedules')
     lecture_sessions = db.relationship('LectureSession', back_populates='lecture_schedule')
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'course': self.course.to_dict(),
+            'venue': self.venues.to_dict(),
+            'semester': self.semester.to_dict(),
+            'start_time': self.start_time,
+            'end_time': self.end_time,
+            'day': self.day,
+            'is_recurring': self.is_recurring,
+            'is_online': self.is_online
+        }
 
     def __repr__(self) -> str:
         return 'LectureSchedule>>> {self.id}'

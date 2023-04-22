@@ -1,3 +1,4 @@
+import calendar
 from datetime import datetime, timedelta
 from random import randint
 
@@ -7,8 +8,8 @@ from src.database.database_context import db, User, Role, Semester, user_roles, 
     lecture_schedule_student_enrolment, student_course_enrollment, tutor_course_enrollment
 from werkzeug.security import generate_password_hash
 
-
 fake = Faker()
+
 
 # Seed data for User model
 def seed_users():
@@ -25,6 +26,7 @@ def seed_users():
         db.session.add(user)
     db.session.commit()
 
+
 # Seed data for Role model
 def seed_roles():
     roles = [
@@ -40,11 +42,14 @@ def seed_roles():
         db.session.add(role_obj)
     db.session.commit()
 
+
 # Seed data for Semester model
 def seed_semesters():
     semesters = [
-        {'name': 'First Semester', 'start_date': datetime(2023, 1, 1), 'end_date': datetime(2023, 6, 30), 'status': 'active', 'created_at': datetime.now()},
-        {'name': 'Second Semester', 'start_date': datetime(2023, 7, 1), 'end_date': datetime(2023, 8, 31), 'status': 'active', 'created_at': datetime.now()},
+        {'name': 'First Semester', 'start_date': datetime(2023, 1, 1), 'end_date': datetime(2023, 6, 30),
+         'status': 'active', 'created_at': datetime.now()},
+        {'name': 'Second Semester', 'start_date': datetime(2023, 7, 1), 'end_date': datetime(2023, 8, 31),
+         'status': 'active', 'created_at': datetime.now()},
 
     ]
     for semester in semesters:
@@ -57,6 +62,7 @@ def seed_semesters():
         )
         db.session.add(semester_obj)
     db.session.commit()
+
 
 # Seed data for Venue model
 def seed_venues():
@@ -72,6 +78,7 @@ def seed_venues():
         )
         db.session.add(venue_obj)
     db.session.commit()
+
 
 # Seed data for Course model
 def seed_courses():
@@ -89,35 +96,40 @@ def seed_courses():
         db.session.add(course_obj)
     db.session.commit()
 
+
 # Seed data for LectureSchedule model
 def seed_lecture_schedules():
     courses = Course.query.all()
     semesters = Semester.query.all()
     venues = Venue.query.all()
 
-    for _ in range(20):
+    for _ in range(8):
         course = fake.random_element(courses)
-        semester = fake.random_element(semesters)
+        semester = Semester.query.filter(Semester.id == 1).first()
         venue = fake.random_element(venues)
 
-        start_time = fake.date_time_this_decade()
+        start_time = fake.random_element(elements=(datetime(2023, 1, 9, 10),
+                                                   datetime(2023, 1, 10, 9),
+                                                   datetime(2023, 1, 11, 10),
+                                                   datetime(2023, 1, 12, 9),
+                                                   datetime(2023, 1, 13, 10)))
         end_time = start_time + timedelta(hours=fake.random_element(elements=(1, 3)))
 
         lecture_schedule = LectureSchedule(
             course_id=course.id,
-            semester_id=semester.id,
+            semester_id=1, #hardcoded this value to focus seed data on current semester
             venue_id=venue.id,
-            day=fake.random_element(elements=('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday')),
             start_time=start_time,
             end_time=end_time,
-            one_off_date=fake.date_time_this_decade(),
-            is_recurring=fake.boolean(),
-            is_online=fake.boolean(),
+            day=start_time.strftime("%A"),
+            is_recurring=True,
+            is_online=False,
 
         )
         db.session.add(lecture_schedule)
 
     db.session.commit()
+
 
 # Seed data for user_roles association
 def seed_user_roles():
@@ -133,44 +145,47 @@ def seed_user_roles():
     db.session.commit()
 
 
-#logic for generating checkin code in the order "AA-BB-CC"
+# logic for generating checkin code in the order "AA-BB-CC"
 def generate_check_in_code():
     # Generate random uppercase characters for each segment of the check-in code
     segment1 = fake.random_uppercase_letter() + fake.random_uppercase_letter()
     segment2 = fake.random_uppercase_letter() + fake.random_uppercase_letter()
     segment3 = fake.random_uppercase_letter() + fake.random_uppercase_letter()
-    check_in_code = f"{segment1}-{segment2}-{segment3}"
+    check_in_code = f"{segment1}{segment2}{segment3}"
     return check_in_code
 
-#Seed data for lecture_sessions association
+
+# Seed data for lecture_sessions association
 def seed_lecture_sessions():
     # Query existing LectureSchedule objects to get their ids and start/end times
     lecture_schedules = LectureSchedule.query.all()
-    lecture_schedule_data = [(schedule.id, schedule.start_time, schedule.end_time) for schedule in lecture_schedules]
+    # lecture_schedule_data = [(schedule.id, schedule.start_time, schedule.end_time) for schedule in lecture_schedules]
 
-    for i in range(10):  # Create 10 lecture sessions
-        lecture_schedule_id, start_time, end_time = fake.random_element(elements=lecture_schedule_data)
-        allow_self_registration = fake.boolean()
-        check_in_code = generate_check_in_code()  # Generate check-in code
-        status = fake.random_element(elements=('active', 'completed'))
-        created_at = datetime.now()
+    for schedule in lecture_schedules:
 
-        lecture_session = LectureSession(
-            lecture_schedule_id=lecture_schedule_id,
-            start_time=start_time,
-            end_time=end_time,
-            allow_self_registration=allow_self_registration,
-            check_in_code=check_in_code,
-            status=status,
-            created_at=created_at
-        )
+        for i in range(20):  # Create 20 lecture sessions per schedule
+            # lecture_schedule_id, start_time, end_time = fake.random_element(elements=lecture_schedule_data)
+            allow_self_registration = fake.boolean()
+            check_in_code = generate_check_in_code()  # Generate check-in code
+            status = fake.random_element(elements=('active', 'completed'))
+            created_at = datetime.now()
 
-        db.session.add(lecture_session)
+            lecture_session = LectureSession(
+                lecture_schedule_id=schedule.id,
+                start_time=schedule.start_time + timedelta(weeks=1),
+                end_time=schedule.end_time + timedelta(weeks=1),
+                allow_self_registration=allow_self_registration,
+                # check_in_code=check_in_code,
+                status=status,
+                created_at=created_at
+            )
+
+            db.session.add(lecture_session)
 
     db.session.commit()
 
 
-#Seed data for lecture_schedule_student_enrolment association
+# Seed data for lecture_schedule_student_enrolment association
 def seed_lecture_schedule_student_enrolment():
     # Get all users with role_id of 2 (student)
     students = User.query.join(User.roles).filter(Role.id == 2).all()
@@ -178,7 +193,6 @@ def seed_lecture_schedule_student_enrolment():
     # Loop through each student and create enrolments
     for student in students:
         enrolments = randint(1, 5)  # Randomly generate number of enrolments (1 to 5)
-
 
         for _ in range(enrolments):
             # Get a random LectureSchedule
@@ -197,14 +211,12 @@ def seed_lecture_schedule_student_enrolment():
                     user_id=student.id
                 )
 
-
                 db.session.execute(enrolment)
-
 
     db.session.commit()
 
 
-#Seed data for student_course_enrollment
+# Seed data for student_course_enrollment
 def seed_student_course_enrollment():
     # Get all users with role_id of 2 (student)
     students = User.query.join(User.roles).filter(Role.id == 2).all()
@@ -235,7 +247,8 @@ def seed_student_course_enrollment():
 
     db.session.commit()
 
-#Seed data for tutor_course_enrollment
+
+# Seed data for tutor_course_enrollment
 def seed_tutor_course_enrollment():
     # Get all users with role_id of 3 (tutor)
     tutors = User.query.join(User.roles).filter(Role.id == 3).all()
@@ -265,4 +278,3 @@ def seed_tutor_course_enrollment():
                 db.session.execute(enrolment)
 
     db.session.commit()
-

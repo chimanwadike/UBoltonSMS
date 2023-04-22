@@ -1,8 +1,7 @@
 from flask import Blueprint, request
 from flask_jwt_extended import jwt_required
 
-from src.services.semester_service import create_semester, get_semesters, get_semester, delete_semester, edit_semester,\
-    get_current_semester
+from src.services.semester_service import create_semester, get_semesters, get_semester, delete_semester, edit_semester
 
 from flasgger import swag_from
 

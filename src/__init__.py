@@ -1,5 +1,7 @@
 from flask import Flask, jsonify
 import os
+
+from src.blueprints.timetables import schedules
 from src.blueprints.auth import auth
 from src.blueprints.semesters import semesters
 from src.blueprints.users import user
@@ -40,6 +42,7 @@ def create_app(test_config=None):
     app.register_blueprint(courses)
     app.register_blueprint(venues)
     app.register_blueprint(roles)
+    app.register_blueprint(schedules)
 
     Swagger(app, config=swagger_config, template=template)
 
