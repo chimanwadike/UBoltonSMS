@@ -119,4 +119,3 @@ def edit_semester(self, id):
          }
     ), HTTP_200_OK
 
-

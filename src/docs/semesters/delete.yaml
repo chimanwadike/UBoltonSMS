@@ -12,7 +12,7 @@ parameters:
     required: true
 
 responses:
-  204:
+  200:
     description: When item is successfully deleted
     schema:
       type: object
