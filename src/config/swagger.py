@@ -1,3 +1,5 @@
+from bearer import Bearer
+
 template = {
     "swagger": "2.0",
     "info": {
@@ -24,7 +26,9 @@ template = {
             "in": "header",
             "description": "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\""
         }
+
     },
+
 }
 
 swagger_config = {
