@@ -1,8 +1,10 @@
 from flask import Blueprint, request
-from src.services.timetable_service import get_course_schedules, get_tutor_course_sessions
+from flask_jwt_extended import jwt_required
+
+from src.services.timetable_service import get_course_schedules, get_lesson_sessions_by_tutor
 from flasgger import swag_from
 
-schedules = Blueprint("schedules", __name__, url_prefix="/api/v1/schedules")
+schedules = Blueprint("schedules", __name__, url_prefix="/api/v1/timetable")
 
 
 @schedules.get('/')
@@ -11,6 +13,7 @@ def get_schedules():
     return get_course_schedules(request.args)
 
 
-@schedules.get('/lesson_sessions')
-def get_lecture_session_by_tutor():
-    return get_tutor_course_sessions(request.args)
+@schedules.get('/tutor/<int:tutor_id>/lesson_sessions')
+@jwt_required()
+def get_lessons_by_tutor(tutor_id):
+    return get_lesson_sessions_by_tutor(request.args, tutor_id)

@@ -1,13 +1,18 @@
 import calendar
+import string
 from datetime import datetime, timedelta
-from random import randint
+from random import randint, choice
 
 from faker import Faker
-from src.database.database_context import db, User, Role, Semester, user_roles, Venue, Course, LectureSchedule, \
+from src.database.database_context import db, User, Role, Semester, UserRole, Venue, Course, LectureSchedule, \
     LectureSession, LectureScheduleUserEnrolment, StudentCourseEnrolment, TutorCourseAssignment
 from werkzeug.security import generate_password_hash
 
 fake = Faker()
+
+
+def gen_digits(max_length):
+    return str(''.join(choice(string.digits) for i in range(max_length)))
 
 
 # Seed data for User model
@@ -16,6 +21,7 @@ def seed_users():
         user = User(
             first_name=fake.first_name(),
             last_name=fake.last_name(),
+            user_code=gen_digits(7),
             phone_number=fake.phone_number(),
             email=fake.email(),
             password=generate_password_hash('password'),
