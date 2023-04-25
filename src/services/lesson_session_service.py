@@ -59,7 +59,7 @@ def get_students_enrolled_in_lesson_session(args, session_id):
     return jsonify({'data': data}), HTTP_200_OK
 
 
-def register_session_attendance(args, session_id):
+def register_session_attendance(request, session_id):
     lecture_session = LectureSession.query \
         .filter(LectureSession.id == session_id) \
         .first()
@@ -77,7 +77,7 @@ def register_session_attendance(args, session_id):
     already_checked_in = [item.user_id for item in db.session.query(LectureSessionAttendance.user_id) \
         .filter(LectureSessionAttendance.lecture_session_id == session_id)]
 
-    data = args.get_json()
+    data = request.get_json()
 
     attendance_entries = [LectureSessionAttendance(user_id=entry.get('user_id', ''),
                                                    attendance_status_code=entry.get('status', ''),
@@ -89,14 +89,45 @@ def register_session_attendance(args, session_id):
     db.session.bulk_save_objects(attendance_entries)
     db.session.commit()
 
-    saved_data = [item.to_dict() for item in LectureSessionAttendance.query.filter(LectureSessionAttendance.lecture_session_id == session_id)]
+    saved_data = [item.to_dict() for item in
+                  LectureSessionAttendance.query.filter(LectureSessionAttendance.lecture_session_id == session_id)]
 
     message = f"Total of  new {len(attendance_entries)} attendance entries successfully registered"
 
     return jsonify({'msg': message, 'data': saved_data}), HTTP_200_OK
 
 
-def update_session_attendance(args):
+def update_session_attendance(request, session_id):
+    lecture_session = LectureSession.query \
+        .filter(LectureSession.id == session_id) \
+        .first()
 
+    if lecture_session is None:
+        return jsonify({'error': 'Lecture session not found'}), HTTP_404_NOT_FOUND
 
-    return jsonify({'msg': 'message'}), HTTP_200_OK
+    scheduled_students = [item.id for item in db.session.query(User.id) \
+        .join(LectureScheduleUserEnrolment) \
+        .join(LectureSchedule) \
+        .filter(LectureScheduleUserEnrolment.lecture_schedule_id == lecture_session.lecture_schedule_id,
+                LectureScheduleUserEnrolment.user_type == 'student',
+                LectureSchedule.semester_id == get_current_semester())]
+
+    already_checked_in = [item.id for item in db.session.query(LectureSessionAttendance.id) \
+        .filter(LectureSessionAttendance.lecture_session_id == session_id)]
+
+    data = request.get_json()
+
+    attendance_updates = [{"id": f"{entry.get('id','')}", "attendance_status_code": f"{entry.get('status', '')}"}
+                          for entry in data if entry.get('status', '') in ALLOWED_ATTENDANCE_CODES
+                          and entry.get('user_id', '') in scheduled_students
+                          and entry.get('id', '') in already_checked_in]
+
+    db.session.bulk_update_mappings(LectureSessionAttendance, attendance_updates)
+    db.session.commit()
+
+    saved_data = [item.to_dict() for item in
+                  LectureSessionAttendance.query.filter(LectureSessionAttendance.lecture_session_id == session_id)]
+
+    message = f"Total of  new {len(attendance_updates)} attendance entries successfully updated"
+
+    return jsonify({'msg': message, 'data': saved_data}), HTTP_200_OK
