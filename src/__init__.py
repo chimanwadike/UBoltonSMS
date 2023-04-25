@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 from flask import Flask, jsonify
 import os
 
@@ -25,8 +27,10 @@ def create_app(test_config=None):
             SQLALCHEMY_DATABASE_URI=os.environ.get("SQLALCHEMY_DB_URI"),
             SQLALCHEMY_TRACK_MODIFICATIONS=True,
             JWT_SECRET_KEY=os.environ.get('JWT_SECRET_KEY'),
-       SWAGGER={'title': 'UBolton API',
-                'uiversion': 3}
+            JWT_ACCESS_TOKEN_EXPIRES=timedelta(days=30),
+            JWT_REFRESH_TOKEN_EXPIRES=timedelta(days=120),
+            SWAGGER={'title': 'UBolton API',
+                     'uiversion': 3}
 
         )
     else:
@@ -51,4 +55,3 @@ def create_app(test_config=None):
         return jsonify({'message': 'something went wrong and we are working on it'}), HTTP_500_INTERNAL_SERVER_ERROR
 
     return app
-

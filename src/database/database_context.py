@@ -62,12 +62,18 @@ class Role(db.Model):
     def __repr__(self) -> str:
         return 'Role>>> {self.id}'
 
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'name': self.name
+        }
 
-user_roles = db.Table('user_roles',
-                      db.Column('id', db.Integer, primary_key=True),
-                      db.Column('user_id', db.Integer, db.ForeignKey('users.id')),
-                      db.Column('role_id', db.Integer, db.ForeignKey('roles.id'))
-                      )
+
+class UserRole(db.Model):
+    __tablename__ = 'user_roles'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
 
 
 class Semester(db.Model):

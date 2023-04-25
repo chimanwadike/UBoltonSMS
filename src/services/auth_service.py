@@ -1,9 +1,9 @@
 from flask import jsonify
 from src.constants.http_status_codes import *
-from src.database.database_context import db, User
+from src.database.database_context import db, User, Role
 import validators
 from werkzeug.security import check_password_hash, generate_password_hash
-from flask_jwt_extended import create_access_token, create_refresh_token, get_jwt_identity
+from flask_jwt_extended import create_access_token, create_refresh_token, get_jwt_identity, verify_jwt_in_request
 
 
 # register user
@@ -56,21 +56,34 @@ def authenticate(args):
         is_pass_correct = check_password_hash(user.password, password)
 
         if is_pass_correct:
-            refresh = create_refresh_token(identity=user.id)
-            access = create_access_token(identity=user.id)
+            roles = [role.to_dict()['id'] for role in user.roles]
+            is_admin = 1 in roles
+            is_student = 2 in roles
+            is_tutor = 3 in roles
+
+            # user.roles.query.filter(Role.id)
+            more_claims = {"is_admin": is_admin, "is_student": is_student, "is_tutor": is_tutor}
+            refresh = create_refresh_token(identity=user.id, additional_claims=more_claims)
+            access = create_access_token(identity=user.id, additional_claims=more_claims)
 
             return jsonify({
                 'user': {
                     'refresh_token': refresh,
                     'access_token': access,
-                    'email': user.email
+                    'email': user.email,
+                    'claims': more_claims
                 }
             }), HTTP_200_OK
+        else:
+            return jsonify({'error': 'Incorrect password'}), HTTP_400_BAD_REQUEST
 
-    return jsonify({'error': 'Wrong credentials'}), HTTP_401_UNAUTHORIZED
+    return jsonify({'error': 'User with the email not found'}), HTTP_404_NOT_FOUND
 
 
 def token_refresh(args):
+    verify_jwt_in_request()
     user_id = get_jwt_identity()
-    access_token = create_access_token(identity=user_id)
-    return jsonify({'access_token': access_token})
+    if user_id:
+        access_token = create_access_token(identity=user_id)
+        return jsonify({'access_token': access_token}), HTTP_200_OK
+    return jsonify({'error': 'Identity error encountered'}), HTTP_400_BAD_REQUEST

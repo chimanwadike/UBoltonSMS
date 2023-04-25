@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from flask import jsonify
+from flask_jwt_extended import verify_jwt_in_request, current_user, get_jwt_identity
 from sqlalchemy import text, column, desc
 from sqlalchemy.orm import load_only
 
@@ -40,7 +41,8 @@ def get_student_course_sessions(args):
 
 
 def get_logged_in_tutor_lesson_sessions(args):
-    tutor_id = 1  # TODO:: change hardcoded value to logged user_id
+    verify_jwt_in_request()
+    tutor_id = get_jwt_identity()  # TODO:: change hardcoded value to logged user_id
 
     assigned_course_schedule_ids = db.session.query(LectureScheduleUserEnrolment.lecture_schedule_id) \
         .join(LectureScheduleUserEnrolment.lecture_schedule) \
