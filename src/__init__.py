@@ -3,6 +3,7 @@ from datetime import timedelta
 from flask import Flask, jsonify
 import os
 
+from src.blueprints.lesson_sessions import lesson_sessions
 from src.blueprints.timetables import schedules
 from src.blueprints.auth import auth
 from src.blueprints.semesters import semesters
@@ -49,6 +50,7 @@ def create_app(test_config=None):
     app.register_blueprint(roles)
     app.register_blueprint(schedules)
     app.register_blueprint(tutor)
+    app.register_blueprint(lesson_sessions)
 
     Swagger(app, config=swagger_config, template=template)
 

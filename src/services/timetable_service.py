@@ -1,12 +1,11 @@
 from datetime import datetime
 
 from flask import jsonify
-from flask_jwt_extended import verify_jwt_in_request, current_user, get_jwt_identity
-from sqlalchemy import text, column, desc
-from sqlalchemy.orm import load_only
+from flask_jwt_extended import verify_jwt_in_request, get_jwt_identity
+from sqlalchemy import desc
 
 from src.constants.http_status_codes import *
-from src.database.database_context import db, Course, LectureSchedule, LectureSession, TutorCourseAssignment, \
+from src.database.database_context import db, LectureSchedule, LectureSession, \
     LectureScheduleUserEnrolment
 from src.utils.utility_functions import get_current_semester
 
@@ -35,45 +34,7 @@ def get_course_schedules(args):
     return jsonify({'data': data, 'meta': meta}), HTTP_200_OK
 
 
-def get_student_course_sessions(args):
-    student_id = 1  # TODO:: change hardcoded value
-    return None
-
-
-def get_logged_in_tutor_lesson_sessions(args, session_id=None):
-    verify_jwt_in_request()
-    tutor_id = get_jwt_identity()
-
-    assigned_course_schedule_ids = db.session.query(LectureScheduleUserEnrolment.lecture_schedule_id) \
-        .join(LectureScheduleUserEnrolment.lecture_schedule) \
-        .filter(LectureScheduleUserEnrolment.user_id == tutor_id, LectureScheduleUserEnrolment.user_type == 'tutor',
-                LectureSchedule.semester_id == get_current_semester())
-
-    lecture_sessions = LectureSession \
-        .query.order_by(desc(LectureSession.end_time)) \
-        .filter(LectureSession.lecture_schedule_id.in_(assigned_course_schedule_ids),
-                LectureSession.end_time <= datetime.now())
-
-    data = ""
-
-    if session_id is None:
-        data = [session.to_dict() for session in lecture_sessions]
-    else:
-        single_data = lecture_sessions.filter(LectureSession.id == session_id).first()
-        if single_data is not None:
-            data = single_data.to_dict()
-        else:
-            return jsonify({'error': 'Lesson session not found'}), HTTP_404_NOT_FOUND
-
-    return jsonify({'data': data}), HTTP_200_OK
-
-
-def get_enrolled_course_students(args):
-    tutor_id = 1  # TODO:: change hardcoded value
-    return None
-
-
-def get_tutor_lesson_sessions_by_tutor_id(args, tutor_id):
+def get_lesson_sessions_by_tutor(args, tutor_id):
     assigned_course_schedule_ids = db.session.query(LectureScheduleUserEnrolment.lecture_schedule_id) \
         .join(LectureScheduleUserEnrolment.lecture_schedule) \
         .filter(LectureScheduleUserEnrolment.user_id == tutor_id, LectureScheduleUserEnrolment.user_type == 'tutor',
