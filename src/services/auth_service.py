@@ -56,8 +56,9 @@ def authenticate(args):
         is_pass_correct = check_password_hash(user.password, password)
 
         if is_pass_correct:
-            refresh = create_refresh_token(identity=user.id)
-            access = create_access_token(identity=user.id)
+            more_claims = ""
+            refresh = create_refresh_token(identity=user.id, additional_claims=more_claims)
+            access = create_access_token(identity=user.id, additional_claims=more_claims)
 
             return jsonify({
                 'user': {
