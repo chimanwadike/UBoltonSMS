@@ -5,6 +5,8 @@ import validators
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask_jwt_extended import create_access_token, create_refresh_token, get_jwt_identity, verify_jwt_in_request
 
+from src.utils.utility_functions import gen_digits
+
 
 # register user
 def create_user(self):
@@ -29,7 +31,8 @@ def create_user(self):
 
     pword_hash = generate_password_hash(pword)
 
-    user = User(first_name=fName, last_name=lName, email=email, phone_number=pNumber, password=pword_hash)
+    user = User(first_name=fName, last_name=lName, email=email, phone_number=pNumber, password=pword_hash,
+                user_code=gen_digits(7))
     db.session.add(user)
     db.session.commit()
 
