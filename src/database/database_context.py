@@ -63,11 +63,11 @@ class Role(db.Model):
         return 'Role>>> {self.id}'
 
 
-user_roles = db.Table('user_roles',
-                      db.Column('id', db.Integer, primary_key=True),
-                      db.Column('user_id', db.Integer, db.ForeignKey('users.id')),
-                      db.Column('role_id', db.Integer, db.ForeignKey('roles.id'))
-                      )
+class UserRole(db.Model):
+    __tablename__ = 'user_roles'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
 
 
 class Semester(db.Model):

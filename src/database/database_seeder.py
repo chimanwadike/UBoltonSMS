@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 from random import randint
 
 from faker import Faker
-from src.database.database_context import db, User, Role, Semester, user_roles, Venue, Course, LectureSchedule, \
+from src.database.database_context import db, User, Role, Semester, UserRole, Venue, Course, LectureSchedule, \
     LectureSession, LectureScheduleUserEnrolment, StudentCourseEnrolment, TutorCourseAssignment
 from werkzeug.security import generate_password_hash
 
