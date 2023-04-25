@@ -62,6 +62,12 @@ class Role(db.Model):
     def __repr__(self) -> str:
         return 'Role>>> {self.id}'
 
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'name': self.name
+        }
+
 
 user_roles = db.Table('user_roles',
                       db.Column('id', db.Integer, primary_key=True),
