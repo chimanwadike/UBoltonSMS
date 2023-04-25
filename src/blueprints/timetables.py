@@ -5,6 +5,8 @@ from src.services.timetable_service import get_course_schedules, get_logged_in_t
     get_tutor_lesson_sessions_by_tutor_id
 from flasgger import swag_from
 
+from src.utils.auth_decorators import tutor_required
+
 schedules = Blueprint("schedules", __name__, url_prefix="/api/v1/timetable")
 
 
@@ -14,7 +16,7 @@ def get_schedules():
     return get_course_schedules(request.args)
 
 
-@jwt_required()
+@tutor_required()
 @schedules.get('/tutor/my_lesson_sessions')
 def tutor_get_my_lessons():
     return get_logged_in_tutor_lesson_sessions(request.args)
