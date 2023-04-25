@@ -39,8 +39,8 @@ def get_student_course_sessions(args):
     return None
 
 
-def get_tutor_course_sessions(args):
-    tutor_id = 1  # TODO:: change hardcoded value
+def get_logged_in_tutor_lesson_sessions(args):
+    tutor_id = 1  # TODO:: change hardcoded value to logged user_id
 
     assigned_course_schedule_ids = db.session.query(LectureScheduleUserEnrolment.lecture_schedule_id) \
         .join(LectureScheduleUserEnrolment.lecture_schedule) \
@@ -62,11 +62,17 @@ def get_enrolled_course_students(args):
     return None
 
 
-def get_tutor_assigned_courses(args):
-    student_id = 1  # TODO:: change hardcoded value
-    return None
+def get_tutor_lesson_sessions_by_tutor_id(args, tutor_id):
+    assigned_course_schedule_ids = db.session.query(LectureScheduleUserEnrolment.lecture_schedule_id) \
+        .join(LectureScheduleUserEnrolment.lecture_schedule) \
+        .filter(LectureScheduleUserEnrolment.user_id == tutor_id, LectureScheduleUserEnrolment.user_type == 'tutor',
+                LectureSchedule.semester_id == get_current_semester())
 
+    lecture_sessions = LectureSession \
+        .query.order_by(desc(LectureSession.end_time)) \
+        .filter(LectureSession.lecture_schedule_id.in_(assigned_course_schedule_ids),
+                LectureSession.end_time <= datetime.now())
 
-def get_tutor_assigned_course_schedule(args):
-    tutor_id = 1  # TODO:: change hardcoded value
-    return None
+    data = [session.to_dict() for session in lecture_sessions]
+
+    return jsonify({'data': data}), HTTP_200_OK
