@@ -40,9 +40,9 @@ def get_student_course_sessions(args):
     return None
 
 
-def get_logged_in_tutor_lesson_sessions(args):
+def get_logged_in_tutor_lesson_sessions(args, session_id=None):
     verify_jwt_in_request()
-    tutor_id = get_jwt_identity()  # TODO:: change hardcoded value to logged user_id
+    tutor_id = get_jwt_identity()
 
     assigned_course_schedule_ids = db.session.query(LectureScheduleUserEnrolment.lecture_schedule_id) \
         .join(LectureScheduleUserEnrolment.lecture_schedule) \
@@ -54,7 +54,16 @@ def get_logged_in_tutor_lesson_sessions(args):
         .filter(LectureSession.lecture_schedule_id.in_(assigned_course_schedule_ids),
                 LectureSession.end_time <= datetime.now())
 
-    data = [session.to_dict() for session in lecture_sessions]
+    data = ""
+
+    if session_id is None:
+        data = [session.to_dict() for session in lecture_sessions]
+    else:
+        single_data = lecture_sessions.filter(LectureSession.id == session_id).first()
+        if single_data is not None:
+            data = single_data.to_dict()
+        else:
+            return jsonify({'error': 'Lesson session not found'}), HTTP_404_NOT_FOUND
 
     return jsonify({'data': data}), HTTP_200_OK
 

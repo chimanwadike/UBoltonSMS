@@ -16,12 +16,7 @@ def get_schedules():
     return get_course_schedules(request.args)
 
 
-@schedules.get('/tutor/my_lesson_sessions')
-@tutor_required()
-def tutor_get_my_lessons():
-    return get_logged_in_tutor_lesson_sessions(request.args)
-
-
 @schedules.get('/tutor/<int:id>/lesson_sessions')
+@jwt_required()
 def get_lessons_tutor_id(id):
     return get_tutor_lesson_sessions_by_tutor_id(request.args, id)
