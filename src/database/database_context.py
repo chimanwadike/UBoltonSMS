@@ -32,6 +32,7 @@ db = SQLAlchemy()
 class User(db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    user_code = db.Column(db.String(10))
     first_name = db.Column(db.String(50), nullable=False)
     last_name = db.Column(db.String(50), nullable=False)
     phone_number = db.Column(db.String(50), nullable=True)
@@ -50,6 +51,14 @@ class User(db.Model):
 
     def __repr__(self) -> str:
         return 'User>>> {self.id}'
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'full_name': self.first_name + ' ' + self.last_name,
+            'code': self.user_code,
+            'email': self.email
+        }
 
 
 class Role(db.Model):
@@ -207,7 +216,6 @@ class LectureSession(db.Model):
             'day': self.lecture_schedule.day
         }
 
-
     def __repr__(self) -> str:
         return 'LectureSession>>> {self.id}'
 
@@ -229,6 +237,7 @@ class LectureScheduleUserEnrolment(db.Model):
     user_type = db.Column(db.String(10), default='student')
 
     lecture_schedule = db.relationship('LectureSchedule')
+    user = db.relationship('User')
 
 
 class StudentCourseEnrolment(db.Model):
@@ -245,7 +254,6 @@ class TutorCourseAssignment(db.Model):
     course_id = db.Column(db.Integer, db.ForeignKey('courses.id'))
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     semester_id = db.Column(db.Integer, db.ForeignKey('semesters.id'))
-
 
 # lecture_session_attendance = db.Table('lecture_session_attendance', db.Column('id', db.Integer, primary_key=True,
 # autoincrement=True), db.Column('lecture_session_id', db.Integer, db.ForeignKey('lecture_sessions.id')),
