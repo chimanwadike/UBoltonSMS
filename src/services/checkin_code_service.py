@@ -8,11 +8,11 @@ from src.database.database_context import db, LectureSession, TutorCourseAssignm
 from flask_jwt_extended import verify_jwt_in_request, get_jwt_identity
 
 
-def generate_check_in_code(lecture_schedule_id):
+def generate_check_in_code(lecture_session_id):
     verify_jwt_in_request()
     tutor_id = get_jwt_identity()
     # Get the lecture session with the given ID
-    lecture_session = LectureSession.query.get_or_404(lecture_schedule_id)
+    lecture_session = LectureSession.query.get_or_404(lecture_session_id)
 
     # Get the tutor course assignment for the course
     tutor_course_assignment = TutorCourseAssignment.query.filter_by(
@@ -37,11 +37,11 @@ def generate_check_in_code(lecture_schedule_id):
     return jsonify(lecture_session.to_dict()), HTTP_200_OK
 
 
-def get_check_in_code(lecture_schedule_id):
+def get_check_in_code(lecture_session_id):
     verify_jwt_in_request()
     tutor_id = get_jwt_identity()
     # Get the lecture session with the given ID
-    lecture_session = LectureSession.query.get_or_404(lecture_schedule_id)
+    lecture_session = LectureSession.query.get_or_404(lecture_session_id)
 
     # Get the tutor course assignment for the course
     tutor_course_assignment = TutorCourseAssignment.query.filter_by(
