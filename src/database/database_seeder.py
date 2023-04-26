@@ -1,18 +1,14 @@
-import calendar
-import string
 from datetime import datetime, timedelta
-from random import randint, choice
+from random import randint
 
 from faker import Faker
 from src.database.database_context import db, User, Role, Semester, UserRole, Venue, Course, LectureSchedule, \
     LectureSession, LectureScheduleUserEnrolment, StudentCourseEnrolment, TutorCourseAssignment
 from werkzeug.security import generate_password_hash
 
+from src.utils.utility_functions import gen_digits
+
 fake = Faker()
-
-
-def gen_digits(max_length):
-    return str(''.join(choice(string.digits) for i in range(max_length)))
 
 
 # Seed data for User model

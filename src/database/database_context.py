@@ -228,6 +228,14 @@ class LectureSessionAttendance(db.Model):
     attendance_status_code = db.Column(db.String(5))
     user = db.relationship('User', back_populates='lecture_sessions_attended')
 
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'lecture_session_id': self.lecture_session_id,
+            'status': self.attendance_status_code,
+            'user_id': self.user_id
+        }
+
 
 class LectureScheduleUserEnrolment(db.Model):
     __tablename__ = 'lecture_schedule_user_enrolment'
