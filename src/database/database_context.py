@@ -213,6 +213,7 @@ class LectureSession(db.Model):
             'venue': self.lecture_schedule.venues.to_dict(),
             'start_time': self.start_time,
             'end_time': self.end_time,
+            'check_in_code': self.check_in_code,
             'day': self.lecture_schedule.day
         }
 
