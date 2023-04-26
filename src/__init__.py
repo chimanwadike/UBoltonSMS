@@ -1,11 +1,17 @@
+from datetime import timedelta
+
 from flask import Flask, jsonify
 import os
+
+from src.blueprints.lesson_sessions import lesson_sessions
+from src.blueprints.timetables import schedules
 from src.blueprints.auth import auth
 from src.blueprints.semesters import semesters
 from src.blueprints.users import user
 from src.blueprints.courses import courses
 from src.blueprints.venues import venues
 from src.blueprints.roles import roles
+from src.blueprints.tutor import tutor
 from src.constants.http_status_codes import HTTP_500_INTERNAL_SERVER_ERROR
 from src.database.database_context import db
 from flasgger import Swagger, swag_from
@@ -23,8 +29,10 @@ def create_app(test_config=None):
             SQLALCHEMY_DATABASE_URI=os.environ.get("SQLALCHEMY_DB_URI"),
             SQLALCHEMY_TRACK_MODIFICATIONS=True,
             JWT_SECRET_KEY=os.environ.get('JWT_SECRET_KEY'),
-       SWAGGER={'title': 'UBolton API',
-                'uiversion': 3}
+            JWT_ACCESS_TOKEN_EXPIRES=timedelta(days=30),
+            JWT_REFRESH_TOKEN_EXPIRES=timedelta(days=120),
+            SWAGGER={'title': 'UBolton API',
+                     'uiversion': 3}
 
         )
     else:
@@ -40,6 +48,9 @@ def create_app(test_config=None):
     app.register_blueprint(courses)
     app.register_blueprint(venues)
     app.register_blueprint(roles)
+    app.register_blueprint(schedules)
+    app.register_blueprint(tutor)
+    app.register_blueprint(lesson_sessions)
 
     Swagger(app, config=swagger_config, template=template)
 
@@ -48,4 +59,3 @@ def create_app(test_config=None):
         return jsonify({'message': 'something went wrong and we are working on it'}), HTTP_500_INTERNAL_SERVER_ERROR
 
     return app
-
