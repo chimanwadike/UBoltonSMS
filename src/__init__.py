@@ -4,7 +4,6 @@ from flask import Flask, jsonify
 import os
 
 from src.blueprints.attendance import attendance
-from src.blueprints.checkin_code import checkin_code
 from src.blueprints.lesson_sessions import lesson_sessions
 from src.blueprints.timetables import schedules
 from src.blueprints.auth import auth
@@ -53,7 +52,6 @@ def create_app(test_config=None):
     app.register_blueprint(schedules)
     app.register_blueprint(tutor)
     app.register_blueprint(lesson_sessions)
-    app.register_blueprint(checkin_code)
     app.register_blueprint(attendance)
 
     Swagger(app, config=swagger_config, template=template)
