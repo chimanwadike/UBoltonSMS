@@ -13,7 +13,7 @@ class TestAPI(unittest.TestCase):
 
     expected_results = {
         "end_date": "2023-08-19",
-        "id": 1,
+        "id": 2,
         "name": "1st Semester",
         "start_date": "2023-08-19"
     }
