@@ -32,8 +32,8 @@ def get_semesters(self):
     return jsonify({'data': data, 'meta': meta}), HTTP_200_OK
 
 
-def get_semester(self, id):
-    data = self.get_json()
+def get_semester_byid(id):
+    # data = self.get_json()
     semester = Semester.query \
         .filter(Semester.id == id) \
         .first()

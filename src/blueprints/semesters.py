@@ -1,7 +1,7 @@
 from flask import Blueprint, request
 from flask_jwt_extended import jwt_required
 
-from src.services.semester_service import create_semester, get_semesters, get_semester, delete_semester, edit_semester
+from src.services.semester_service import create_semester, get_semesters, get_semester_byid, delete_semester, edit_semester
 
 from flasgger import swag_from
 
@@ -19,7 +19,7 @@ def get_all():
 @semesters.get('/<int:id>')
 @swag_from('../docs/semesters/get.yaml')
 def get_semester(id):
-    return get_semester(request, id)
+    return get_semester_byid(id)
 
 
 @jwt_required()
