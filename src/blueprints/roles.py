@@ -14,7 +14,6 @@ def get_all():
     return get_roles(request)
 
 
-
 @roles.get('/<int:id>')
 @swag_from('../docs/roles/get.yaml')
 @jwt_required()

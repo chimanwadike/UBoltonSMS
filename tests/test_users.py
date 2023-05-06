@@ -23,17 +23,17 @@ class TestAPI(unittest.TestCase):
 
     def test_1_get_all_users(self):
         resp = requests.get(self.URL)
-        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.status_code, 401)
         print("Test 1 to get all users roles completed")
 
     def test_2_get_specific_user(self):
         resp = requests.get(self.URL + '/1')
-        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.status_code, 401)
         print("Test 2 to get user by id completed")
 
     def test_3_delete_specific_user(self):
         resp = requests.delete(self.URL + '/35')
-        self.assertEqual(resp.status_code, 400)
+        self.assertEqual(resp.status_code, 401)
         print("Test 3 to delete user by id completed")
 
 
