@@ -8,40 +8,37 @@ from flasgger import swag_from
 semesters = Blueprint("semesters", __name__, url_prefix="/api/v1/semesters")
 
 
-@jwt_required()
 @semesters.get('/')
 @swag_from('../docs/semesters/get_all.yaml')
+@jwt_required()
 def get_all():
     return get_semesters(request)
 
 
-@jwt_required()
 @semesters.get('/<int:id>')
 @swag_from('../docs/semesters/get.yaml')
+@jwt_required()
 def get_semester(id):
     return get_semester_byid(id)
 
 
-@jwt_required()
 @semesters.post('/')
 @swag_from('../docs/semesters/create.yaml')
+@jwt_required()
 def create():
     return create_semester(request)
 
 
-@jwt_required()
 @semesters.delete('/<int:id>')
 @swag_from('../docs/semesters/delete.yaml')
+@jwt_required()
 def delete(id):
     return delete_semester(request, id)
 
 
-@jwt_required()
 @semesters.put('/<int:id>')
 @semesters.patch('/<int:id>')
 @swag_from('../docs/semesters/update.yaml')
+@jwt_required()
 def get(id):
     return edit_semester(request, id)
-
-
-

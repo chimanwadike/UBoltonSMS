@@ -84,7 +84,7 @@ def delete_role(self, id):
         .first()
 
     if not role:
-        return jsonify({'message': 'Role does not exist'}), HTTP_404_NOT_FOUND
+        return jsonify({'message': 'Role does not exist'}), HTTP_400_BAD_REQUEST
 
     db.session.delete(role)
     db.session.commit()

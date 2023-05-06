@@ -13,8 +13,8 @@ def get_all():
 
 @venues.get('/<int:id>')
 @swag_from('../docs/venues/get.yaml')
-def get_venue(id):
-    return get_venue(request, id)
+def get_venue_by_id(id):
+    return get_venue(id)
 
 
 @venues.post('/')

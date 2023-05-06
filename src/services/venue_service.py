@@ -32,8 +32,7 @@ def get_venues(self):
     return jsonify({'data': data, 'meta': meta}), HTTP_200_OK
 
 
-def get_venue(self, id):
-    data = self.get_json()
+def get_venue(id):
     venue = Venue.query \
         .filter(Venue.id == id) \
         .first()

@@ -84,7 +84,7 @@ def delete_semester(self, id):
         .first()
 
     if not semester:
-        return jsonify({'message': 'Semester does not exist'}), HTTP_404_NOT_FOUND
+        return jsonify({'message': 'Semester does not exist'}), HTTP_400_BAD_REQUEST
 
     db.session.delete(semester)
     db.session.commit()

@@ -90,7 +90,7 @@ def delete_user(self, id):
         .filter(User.id == id) \
         .first()
     if not user:
-        return jsonify({'message': 'User does not exist'}), HTTP_404_NOT_FOUND
+        return jsonify({'message': 'User does not exist'}), HTTP_400_BAD_REQUEST
     db.session.delete(user)
     db.session.commit()
-    return jsonify({'message': 'User deleted succesfully'}), HTTP_200_OK
+    return jsonify({'message': 'User deleted succesfully'}), HTTP_204_NO_CONTENT

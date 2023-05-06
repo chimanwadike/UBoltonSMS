@@ -1,5 +1,3 @@
-from bearer import Bearer
-
 template = {
     "swagger": "2.0",
     "info": {
