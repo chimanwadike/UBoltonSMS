@@ -44,3 +44,14 @@ def register_attendance(data):
     db.session.commit()
 
     return jsonify(attendance.to_dict()), HTTP_200_OK
+
+
+def get_student_attendance_history():
+    verify_jwt_in_request()
+    student_id = get_jwt_identity()
+
+    attendance = LectureSessionAttendance.query.filter_by(user_id=student_id)
+
+    data = [session.to_dict() for session in attendance]
+
+    return jsonify({'data': data}), HTTP_200_OK

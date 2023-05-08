@@ -27,7 +27,7 @@ def update_lesson_session_attendance(session_id):
     return update_session_attendance(request, session_id=session_id)
 
 
-@lesson_sessions.post('/<int:id>/generate_check_in_code')
+@lesson_sessions.post('/<int:id>/check_in_code')
 @tutor_required()
 def generate_checkin_code(id):
     return generate_check_in_code(lecture_session_id=id)

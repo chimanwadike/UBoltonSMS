@@ -1,33 +1,8 @@
 from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
-import json
 
 db = SQLAlchemy()
 
-
-# lecture_schedule_user_enrolment = db.Table('lecture_schedule_user_enrolment',
-#                                            db.Column('id', db.Integer, primary_key=True),
-#                                            db.Column('lecture_schedule_id', db.Integer,
-#                                                      db.ForeignKey('lecture_schedules.id')),
-#                                            db.Column('user_id', db.Integer, db.ForeignKey('users.id')),
-#                                            db.Column('user_type', db.String(10), default='student')
-#                                            )
-
-# student_course_enrollment = db.Table('student_course_enrollment',
-#                                      db.Column('id', db.Integer, primary_key=True),
-#                                      db.Column('course_id', db.Integer,
-#                                                db.ForeignKey('courses.id')),
-#                                      db.Column('user_id', db.Integer, db.ForeignKey('users.id')),
-#                                      db.Column('semester_id', db.Integer, db.ForeignKey('semesters.id'))
-#                                      )
-
-# tutor_course_assignment = db.Table('tutor_course_assignment',
-#                                    db.Column('id', db.Integer, primary_key=True),
-#                                    db.Column('course_id', db.Integer,
-#                                              db.ForeignKey('courses.id')),
-#                                    db.Column('user_id', db.Integer, db.ForeignKey('users.id')),
-#                                    db.Column('semester_id', db.Integer, db.ForeignKey('semesters.id'))
-#                                    )
 
 class User(db.Model):
     __tablename__ = 'users'
@@ -42,12 +17,7 @@ class User(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.now())
     deleted_at = db.Column(db.DateTime, nullable=True)
     roles = db.relationship('Role', secondary='user_roles', back_populates='users')
-    # lecture_schedules = db.relationship('LectureSchedule', secondary=lecture_schedule_user_enrolment,
-    #                                    back_populates='users')
     lecture_sessions_attended = db.relationship('LectureSessionAttendance', back_populates='user')
-
-    # courses = db.relationship('Course', secondary=student_course_enrollment, back_populates='user')
-    # tutor_courses = db.relationship('Course', secondary=tutor_course_enrollment, back_populates='user')
 
     def __repr__(self) -> str:
         return 'User>>> {self.id}'
@@ -97,8 +67,6 @@ class Semester(db.Model):
     deleted_at = db.Column(db.DateTime)
     lecture_schedules = db.relationship('LectureSchedule', back_populates='semester')
 
-    # courses = db.relationship('Course', secondary=student_course_enrollment, back_populates='semesters')
-
     def to_dict(self):
         return {
             'id': self.id,
@@ -139,10 +107,6 @@ class Course(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.now())
     lecture_schedules = db.relationship('LectureSchedule', back_populates='course')
 
-    # students = db.relationship('User', secondary=student_course_enrollment, back_populates='courses')
-    # tutors = db.relationship('User', secondary=tutor_course_enrollment, back_populates='tutor_courses')
-    # semesters = db.relationship('Semester', secondary=student_course_enrollment, back_populates='courses')
-
     def to_dict(self):
         return {
             'id': self.id,
@@ -171,7 +135,6 @@ class LectureSchedule(db.Model):
     course = db.relationship('Course', back_populates='lecture_schedules')
     semester = db.relationship('Semester', back_populates='lecture_schedules')
     venues = db.relationship('Venue', back_populates='lecture_schedules')
-    # users = db.relationship('User', secondary='lecture_schedule_user_enrolment', back_populates='lecture_schedules')
     lecture_sessions = db.relationship('LectureSession', back_populates='lecture_schedule')
 
     def to_dict(self):
@@ -228,13 +191,15 @@ class LectureSessionAttendance(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     attendance_status_code = db.Column(db.String(5))
     user = db.relationship('User', back_populates='lecture_sessions_attended')
+    lecture_session = db.relationship('LectureSession')
 
     def to_dict(self):
         return {
             'id': self.id,
             'lecture_session_id': self.lecture_session_id,
             'status': self.attendance_status_code,
-            'user_id': self.user_id
+            'user_id': self.user_id,
+            'course_info': self.lecture_session.to_dict()["course"]
         }
 
 
@@ -263,7 +228,3 @@ class TutorCourseAssignment(db.Model):
     course_id = db.Column(db.Integer, db.ForeignKey('courses.id'))
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     semester_id = db.Column(db.Integer, db.ForeignKey('semesters.id'))
-
-# lecture_session_attendance = db.Table('lecture_session_attendance', db.Column('id', db.Integer, primary_key=True,
-# autoincrement=True), db.Column('lecture_session_id', db.Integer, db.ForeignKey('lecture_sessions.id')),
-# db.Column('user_id', db.Integer, db.ForeignKey('users.id')), db.Column('attendance_status_code', db.String(5)) )
