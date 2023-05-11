@@ -10,7 +10,7 @@ lesson_sessions = Blueprint("lesson_sessions", __name__, url_prefix="/api/v1/les
 
 
 @lesson_sessions.get('/<int:session_id>/students')
-@jwt_required()
+@tutor_required()
 def students_by_lesson_session(session_id):
     return get_students_enrolled_in_lesson_session(request.args, session_id=session_id)
 

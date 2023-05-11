@@ -84,9 +84,9 @@ def seed_venues():
 # Seed data for Course model
 def seed_courses():
     courses = [
-        {'name': 'SWE71001', 'description': 'Software Engineering'},
+        {'name': 'SWE71001', 'description': 'Contemporary Software Engineering'},
         {'name': 'SWE71002', 'description': 'Advance Software Development'},
-        {'name': 'SWE71002', 'description': 'DevOps'}
+        {'name': 'SWE71003', 'description': 'DevOps'}
     ]
     for course in courses:
         course_obj = Course(
@@ -114,7 +114,7 @@ def seed_lecture_schedules():
                                                    datetime(2023, 1, 11, 10),
                                                    datetime(2023, 1, 12, 9),
                                                    datetime(2023, 1, 13, 10)))
-        end_time = start_time + timedelta(hours=fake.random_element(elements=(1, 3)))
+        end_time = start_time + timedelta(hours=fake.random_element(elements=(1, 5)))
 
         lecture_schedule = LectureSchedule(
             course_id=course.id,

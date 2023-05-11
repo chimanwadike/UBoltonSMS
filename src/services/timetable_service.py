@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from flask import jsonify
 from flask_jwt_extended import verify_jwt_in_request, get_jwt_identity
@@ -11,12 +11,20 @@ from src.utils.utility_functions import get_current_semester
 
 
 def get_course_schedules(args):
+    verify_jwt_in_request()
+    user_id = get_jwt_identity()
+
     page = args.get('page', 1, type=int)
 
     per_page = args.get('per_page', 5, type=int)
 
+    user_course_schedule_ids = db.session.query(LectureScheduleUserEnrolment.lecture_schedule_id) \
+        .join(LectureScheduleUserEnrolment.lecture_schedule) \
+        .filter(LectureScheduleUserEnrolment.user_id == user_id,
+                LectureSchedule.semester_id == get_current_semester())
+
     course_schedules = LectureSchedule.query \
-        .filter(LectureSchedule.semester_id == get_current_semester()) \
+        .filter(LectureSchedule.id.in_(user_course_schedule_ids)) \
         .paginate(page=page, per_page=per_page)
 
     data = [schedule.to_dict() for schedule in course_schedules]
@@ -43,7 +51,7 @@ def get_lesson_sessions_by_tutor(args, tutor_id):
     lecture_sessions = LectureSession \
         .query.order_by(desc(LectureSession.end_time)) \
         .filter(LectureSession.lecture_schedule_id.in_(assigned_course_schedule_ids),
-                LectureSession.end_time <= datetime.now())
+                LectureSession.end_time <= datetime.now() + timedelta(hours=12))
 
     data = [session.to_dict() for session in lecture_sessions]
 

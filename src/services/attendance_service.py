@@ -2,8 +2,10 @@ from datetime import datetime
 from flask import jsonify
 from src.constants.http_status_codes import *
 from src.database.database_context import db, LectureSession, LectureSessionAttendance, \
-    StudentCourseEnrolment
+    StudentCourseEnrolment, LectureScheduleUserEnrolment
 from flask_jwt_extended import verify_jwt_in_request, get_jwt_identity
+
+from src.utils.utility_functions import get_current_semester
 
 
 def register_attendance(data):
@@ -26,9 +28,14 @@ def register_attendance(data):
     #     return jsonify({'message': 'Invalid user ID'}), HTTP_400_BAD_REQUEST
 
     # Check if student is enrolled in the course for which the lecture session is being held
-    if not StudentCourseEnrolment.query.filter_by(user_id=student_id,
-                                                  course_id=lecture_session.lecture_schedule.course_id).first():
-        return jsonify({'message': 'Not enrolled in this course'}), HTTP_400_BAD_REQUEST
+    # if not StudentCourseEnrolment.query.filter_by(user_id=student_id,
+    #                                               course_id=lecture_session.lecture_schedule.course_id).first():
+    #     return jsonify({'message': 'Not enrolled in this course'}), HTTP_400_BAD_REQUEST
+
+    if not LectureScheduleUserEnrolment.query\
+            .filter_by(user_id=student_id, user_type='student', lecture_schedule_id=lecture_session.lecture_schedule_id)\
+            .first():
+        return jsonify({'message': 'Not enrolled in this course / session'}), HTTP_400_BAD_REQUEST
 
     # Check if student has already registered for this lecture session
     if LectureSessionAttendance.query.filter_by(lecture_session_id=lecture_session.id, user_id=student_id).first():
