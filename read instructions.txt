@@ -1,0 +1,30 @@
+
+# install dependencies
+pip install -r requirements.txt
+
+# access the flask shell
+flask shell
+
+# one database setup
+from src.database.database_context import db
+db.create_all()
+
+# run the seeder function to load dummy data
+from src.database.seed_data import seed_all
+seed_all()
+
+# exit the shell
+quit()
+
+# now you can run
+flask run
+
+#test login credentials
+#tutor {"email": "demo_tutor@app.com", "password":"password"}
+#student {"email": "demo_student@app.com", "password":"password"}
+
+
+
+
+
+

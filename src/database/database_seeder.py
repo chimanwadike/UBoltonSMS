@@ -13,7 +13,20 @@ fake = Faker()
 
 # Seed data for User model
 def seed_users():
-    for _ in range(30):
+    demo_tutor = User(
+        first_name='Demo',
+        last_name='Tutor',
+        user_code=gen_digits(7),
+        phone_number=fake.phone_number(),
+        email='demo_tutor@app.com',
+        password=generate_password_hash('password'),
+        status='active',
+        created_at=datetime.now()
+    )
+
+    db.session.add(demo_tutor)
+
+    for _ in range(28):
         user = User(
             first_name=fake.first_name(),
             last_name=fake.last_name(),
@@ -25,6 +38,20 @@ def seed_users():
             created_at=datetime.now()
         )
         db.session.add(user)
+
+    demo_student = User(
+        first_name='Demo',
+        last_name='Student',
+        user_code=gen_digits(7),
+        phone_number=fake.phone_number(),
+        email='demo_student@app.com',
+        password=generate_password_hash('password'),
+        status='active',
+        created_at=datetime.now()
+    )
+
+    db.session.add(demo_student)
+
     db.session.commit()
 
 
